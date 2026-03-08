@@ -5,7 +5,7 @@ session_id:
 max_iterations: 5
 completion_promise: null
 started_at: "2026-03-08T15:09:47Z"
-completed_at: "2026-03-09T00:05:00Z"
+completed_at: "2026-03-09T00:10:00Z"
 ---
 
 让这个 Java 项目变得更好
@@ -29,12 +29,16 @@ completed_at: "2026-03-09T00:05:00Z"
 - 添加 FixedWindowRateLimiter 单元测试（7 个测试用例）
 - 修复敏感词解析 bug（支持中文逗号分隔）
 
+### 第四轮改进
+- 添加 RestaurantAppService 单元测试（9 个测试用例）
+- 测试覆盖创建、查询、检索场景
+
 ## 项目当前状态
 
 **测试覆盖:**
-- 85 个测试全部通过
+- 94 个测试全部通过
 - 8 个集成测试（每个服务一个）
-- 77 个单元测试（通用模块 + 服务层）
+- 86 个单元测试（通用模块 + 服务层）
 
 **代码质量:**
 - 修复了敏感词解析 bug
