@@ -99,14 +99,15 @@ public class RiskControlAppService {
     /**
      * 解析敏感词配置。
      *
-     * @param csv 逗号分隔的敏感词
+     * @param csv 逗号分隔的敏感词（支持中英文逗号）
      * @return 规范化（小写、去空白）后的敏感词集合
      */
     private static Set<String> parseKeywords(String csv) {
         if (csv == null || csv.isBlank()) {
             return Set.of();
         }
-        return Arrays.stream(csv.split(","))
+        // 支持中文逗号和英文逗号分隔
+        return Arrays.stream(csv.split(",|，"))
                 .map(String::trim)
                 .filter(s -> !s.isBlank())
                 .map(s -> s.toLowerCase(Locale.ROOT))
