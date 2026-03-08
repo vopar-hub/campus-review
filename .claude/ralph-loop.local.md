@@ -1,16 +1,16 @@
 ---
 active: false
-iteration: 4
+iteration: 5
 session_id:
 max_iterations: 5
 completion_promise: null
 started_at: "2026-03-08T15:09:47Z"
-completed_at: "2026-03-09T00:10:00Z"
+completed_at: "2026-03-09T00:20:00Z"
 ---
 
 让这个 Java 项目变得更好
 
-## 本轮迭代完成的工作
+## 五轮迭代完成的工作
 
 ### 第一轮改进
 - 统一服务配置（OpenAPI, Actuator, H2 控制台）
@@ -22,7 +22,6 @@ completed_at: "2026-03-09T00:10:00Z"
 ### 第二轮改进
 - 添加 UserAccountService 单元测试（10 个测试用例）
 - 测试覆盖注册和登录的所有场景
-- 使用 Mockito 模拟依赖
 
 ### 第三轮改进
 - 添加 RiskControlAppService 单元测试（11 个测试用例）
@@ -33,17 +32,22 @@ completed_at: "2026-03-09T00:10:00Z"
 - 添加 RestaurantAppService 单元测试（9 个测试用例）
 - 测试覆盖创建、查询、检索场景
 
-## 项目当前状态
+### 第五轮改进
+- 添加 NotificationAppService 单元测试（2 个测试用例）
+- 测试覆盖发送消息场景
+
+## 项目最终状态
 
 **测试覆盖:**
-- 94 个测试全部通过
+- 96 个测试全部通过
 - 8 个集成测试（每个服务一个）
-- 86 个单元测试（通用模块 + 服务层）
+- 88 个单元测试
 
 **代码质量:**
 - 修复了敏感词解析 bug
 - 所有服务配置一致
 - 所有测试通过
+- 5 个服务添加了服务层单元测试
 
 **模块结构:**
 - 16 个模块全部构建成功
