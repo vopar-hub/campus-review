@@ -54,6 +54,10 @@
 - Gateway 添加 HTTP 客户端超时配置
 - 统一各服务 schema.sql 与 Flyway 迁移脚本
 - 更新 test-data.sql 测试数据脚本
+- 为所有服务添加 SpringDoc OpenAPI 和 Actuator 配置
+- 为所有使用数据库的服务添加 H2 控制台配置
+- 清理 admin-service 不需要的依赖（MyBatis-Plus、H2、Redis、JWT）
+- 更新快速启动文档，添加详细的启动说明和 API 示例
 
 ### 修复
 - 修复部分服务缺少数据库配置问题
