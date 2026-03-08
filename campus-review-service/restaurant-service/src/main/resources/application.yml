@@ -1,0 +1,32 @@
+server:
+  port: 8102
+
+spring:
+  cloud:
+    compatibility-verifier:
+      enabled: false
+    nacos:
+      config:
+        enabled: false
+      discovery:
+        enabled: true
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+  application:
+    name: restaurant-service
+  datasource:
+    url: jdbc:h2:mem:restaurantdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true

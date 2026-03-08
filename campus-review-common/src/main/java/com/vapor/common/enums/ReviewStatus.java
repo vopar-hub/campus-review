@@ -1,0 +1,49 @@
+package com.vapor.common.enums;
+
+/**
+ * 评价状态枚举。
+ */
+public enum ReviewStatus {
+    /**
+     * 待审核
+     */
+    PENDING("PENDING"),
+
+    /**
+     * 已通过
+     */
+    APPROVED("APPROVED"),
+
+    /**
+     * 已驳回
+     */
+    REJECTED("REJECTED");
+
+    private final String code;
+
+    ReviewStatus(String code) {
+        this.code = code;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     * 根据代码获取枚举。
+     *
+     * @param code 状态代码
+     * @return 对应的枚举值，找不到返回 null
+     */
+    public static ReviewStatus fromCode(String code) {
+        if (code == null) {
+            return null;
+        }
+        for (ReviewStatus status : values()) {
+            if (status.code.equals(code)) {
+                return status;
+            }
+        }
+        return null;
+    }
+}

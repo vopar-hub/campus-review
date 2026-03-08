@@ -1,0 +1,53 @@
+# 构建多阶段 Docker 镜像
+FROM maven:17-eclipse-temurin AS builder
+
+WORKDIR /app
+
+# 复制 pom.xml 文件以利用 Docker 缓存层
+COPY pom.xml .
+COPY campus-review-common/pom.xml campus-review-common/
+COPY campus-review-model/pom.xml campus-review-model/
+COPY campus-review-utils/pom.xml campus-review-utils/
+COPY campus-review-service/pom.xml campus-review-service/
+
+# 复制服务 pom.xml
+COPY campus-review-service/risk-control-service/pom.xml campus-review-service/risk-control-service/
+
+# 下载依赖
+RUN mvn dependency:go-offline -B
+
+# 复制源代码
+COPY campus-review-common/src campus-review-common/src
+COPY campus-review-model/src campus-review-model/src
+COPY campus-review-utils/src campus-review-utils/src
+COPY campus-review-service/src campus-review-service/src
+
+# 构建项目
+RUN mvn clean install -DskipTests -B
+
+# 运行阶段
+FROM eclipse-temurin:17-jre-alpine
+
+WORKDIR /app
+
+# 创建非 root 用户
+RUN addgroup -g 1001 appgroup && adduser -u 1001 -G appgroup -D appuser
+
+# 复制构建产物
+COPY --from=builder /app/campus-review-service/risk-control-service/target/*.jar app.jar
+
+# 设置文件权限
+RUN chown appuser:appgroup app.jar
+
+# 切换到非 root 用户
+USER appuser
+
+# 暴露端口
+EXPOSE 8107
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:8107/api/health || exit 1
+
+# 启动应用
+ENTRYPOINT ["java", "-jar", "app.jar"]

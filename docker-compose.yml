@@ -1,0 +1,229 @@
+services:
+  # Nacos 服务注册与配置中心
+  nacos:
+    image: nacos/nacos-server:2.2.0
+    container_name: nacos
+    environment:
+      - MODE=standalone
+      - SPRING_DATASOURCE_PLATFORM=mysql
+      - MYSQL_SERVICE_HOST=mysql
+      - MYSQL_SERVICE_PORT=3306
+      - MYSQL_SERVICE_DB_NAME=nacos_config
+      - MYSQL_SERVICE_USER=root
+      - MYSQL_SERVICE_PASSWORD=nacos
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    depends_on:
+      - mysql
+    networks:
+      - campus-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8848/nacos/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Redis 缓存
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - campus-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # MySQL 数据库（生产环境使用）
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=nacos
+      - MYSQL_DATABASE=campus_review
+      - MYSQL_USER=campus
+      - MYSQL_PASSWORD=campus123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - campus-network
+
+  # 用户服务
+  user-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: user-service
+    ports:
+      - "8101:8101"
+    environment:
+      - JAVA_OPTS=-Xmx512m
+      - JWT_SECRET=dev-secret-change-to-32-chars-min
+      - NACOS_SERVER_ADDR=nacos:8848
+      - REDIS_HOST=redis
+    depends_on:
+      - nacos
+      - redis
+    networks:
+      - campus-network
+
+  # 餐馆服务
+  restaurant-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.restaurant
+    container_name: restaurant-service
+    ports:
+      - "8102:8102"
+    environment:
+      - JAVA_OPTS=-Xmx512m
+    depends_on:
+      - user-service
+    networks:
+      - campus-network
+
+  # 评价服务
+  review-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.review
+    container_name: review-service
+    ports:
+      - "8103:8103"
+    environment:
+      - JAVA_OPTS=-Xmx512m
+    depends_on:
+      - restaurant-service
+    networks:
+      - campus-network
+
+  # 互动服务
+  interaction-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.interaction
+    container_name: interaction-service
+    ports:
+      - "8104:8104"
+    environment:
+      - JAVA_OPTS=-Xmx512m
+    depends_on:
+      - review-service
+    networks:
+      - campus-network
+
+  # 排行榜服务
+  ranking-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.ranking
+    container_name: ranking-service
+    ports:
+      - "8105:8105"
+    environment:
+      - JAVA_OPTS=-Xmx512m
+    depends_on:
+      - interaction-service
+    networks:
+      - campus-network
+
+  # 通知服务
+  notification-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.notification
+    container_name: notification-service
+    ports:
+      - "8106:8106"
+    environment:
+      - JAVA_OPTS=-Xmx512m
+    depends_on:
+      - user-service
+    networks:
+      - campus-network
+
+  # 风控服务
+  risk-control-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.risk-control
+    container_name: risk-control-service
+    ports:
+      - "8107:8107"
+    environment:
+      - JAVA_OPTS=-Xmx512m
+    depends_on:
+      - user-service
+    networks:
+      - campus-network
+
+  # 管理服务
+  admin-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.admin
+    container_name: admin-service
+    ports:
+      - "8108:8108"
+    environment:
+      - JAVA_OPTS=-Xmx512m
+    depends_on:
+      - user-service
+    networks:
+      - campus-network
+
+  # 用户网关
+  user-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.user-gateway
+    container_name: user-gateway
+    ports:
+      - "8001:8001"
+    environment:
+      - JAVA_OPTS=-Xmx512m
+      - JWT_SECRET=dev-secret-change-to-32-chars-min
+    depends_on:
+      - user-service
+      - restaurant-service
+      - review-service
+      - interaction-service
+      - ranking-service
+      - notification-service
+    networks:
+      - campus-network
+
+  # 管理网关
+  admin-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.admin-gateway
+    container_name: admin-gateway
+    ports:
+      - "8002:8002"
+    environment:
+      - JAVA_OPTS=-Xmx512m
+      - JWT_SECRET=dev-secret-change-to-32-chars-min
+      - NACOS_SERVER_ADDR=nacos:8848
+    depends_on:
+      - admin-service
+    networks:
+      - campus-network
+
+networks:
+  campus-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+  mysql-data:

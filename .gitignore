@@ -1,0 +1,69 @@
+# .gitignore for Campus Review Project
+
+# Compiled class files
+*.class
+
+# Log files
+*.log
+logs/
+
+# Package files
+*.jar
+*.war
+*.ear
+*.nar
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Application specific
+application-local.yml
+application-local.properties
+*.env
+*.key
+*.crt
+*.pem
+
+# Test coverage
+coverage/
+cobertura.ser
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+build_*.txt
+
+# H2 database (for local dev)
+*.db
+*.trace.db
+
+# Swagger/OpenAPI generated files
+swagger-ui/api-docs.json

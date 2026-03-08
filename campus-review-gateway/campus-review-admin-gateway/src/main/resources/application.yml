@@ -1,0 +1,48 @@
+server:
+  port: 8002
+  # 请求体大小限制
+  http:
+    max-header-size: 8KB
+    max-initial-line-length: 4KB
+
+spring:
+  application:
+    name: admin-gateway
+  main:
+    web-application-type: reactive
+  cloud:
+    compatibility-verifier:
+      enabled: false
+    nacos:
+      config:
+        enabled: false
+      discovery:
+        enabled: true
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            maxAge: 3600
+            allowCredentials: true
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: admin-service
+          uri: lb://admin-service
+          predicates:
+            - Path=/api/admin/**
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:dev-secret-change-to-32-chars-min}

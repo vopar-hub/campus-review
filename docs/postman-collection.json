@@ -1,0 +1,279 @@
+{
+  "info": {
+    "name": "Campus Review API",
+    "description": "校园美食点评平台 API 接口测试集合",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8001",
+      "type": "string"
+    },
+    {
+      "key": "admin_url",
+      "value": "http://localhost:8002",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "用户认证",
+      "item": [
+        {
+          "name": "用户注册",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@campus.edu\",\n  \"studentNo\": \"20250001\",\n  \"password\": \"test123456\",\n  \"nickname\": \"测试用户\"\n}"
+            },
+            "url": {"raw": "{{base_url}}/api/auth/register"}
+          }
+        },
+        {
+          "name": "用户登录",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"account\": \"test@campus.edu\",\n  \"password\": \"test123456\"\n}"
+            },
+            "url": {"raw": "{{base_url}}/api/auth/login"},
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": ["var jsonData = pm.response.json();", "pm.collectionVariables.set(\"token\", jsonData.data.token);"]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "获取当前用户信息",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "X-User-Id", "value": "{{token}}"}],
+            "url": {"raw": "{{base_url}}/api/users/me"}
+          }
+        }
+      ]
+    },
+    {
+      "name": "餐馆管理",
+      "item": [
+        {
+          "name": "创建餐馆",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"测试餐厅\",\n  \"campus\": \"主校区\",\n  \"address\": \"校园路 1 号\",\n  \"description\": \"测试描述\",\n  \"coverImageUrl\": \"http://example.com/cover.jpg\"\n}"
+            },
+            "url": {"raw": "{{base_url}}/api/restaurants"}
+          }
+        },
+        {
+          "name": "获取餐馆列表",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/api/restaurants"}
+          }
+        },
+        {
+          "name": "搜索餐馆",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/api/restaurants?name=餐厅&campus=主校区"}
+          }
+        },
+        {
+          "name": "获取餐馆详情",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/api/restaurants/1"}
+          }
+        }
+      ]
+    },
+    {
+      "name": "评价管理",
+      "item": [
+        {
+          "name": "发布评价",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"restaurantId\": 1,\n  \"rating\": 5,\n  \"content\": \"味道很好，推荐！\"\n}"
+            },
+            "url": {"raw": "{{base_url}}/api/reviews"}
+          }
+        },
+        {
+          "name": "获取餐馆评价",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/api/reviews?restaurantId=1"}
+          }
+        },
+        {
+          "name": "获取我的评价",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/api/reviews/me"}
+          }
+        }
+      ]
+    },
+    {
+      "name": "互动管理",
+      "item": [
+        {
+          "name": "点赞",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"targetType\": \"review\",\n  \"targetId\": 1\n}"
+            },
+            "url": {"raw": "{{base_url}}/api/interactions/like"}
+          }
+        },
+        {
+          "name": "取消点赞",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"targetType\": \"review\",\n  \"targetId\": 1\n}"
+            },
+            "url": {"raw": "{{base_url}}/api/interactions/unlike"}
+          }
+        },
+        {
+          "name": "收藏",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"targetType\": \"restaurant\",\n  \"targetId\": 1\n}"
+            },
+            "url": {"raw": "{{base_url}}/api/interactions/favorite"}
+          }
+        },
+        {
+          "name": "获取互动计数",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/api/interactions/count?targetType=review&targetId=1"}
+          }
+        }
+      ]
+    },
+    {
+      "name": "排行榜",
+      "item": [
+        {
+          "name": "热门餐馆 Top10",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/api/rankings/hot-restaurants?topN=10"}
+          }
+        }
+      ]
+    },
+    {
+      "name": "通知",
+      "item": [
+        {
+          "name": "获取收件箱",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/api/notifications/inbox"}
+          }
+        },
+        {
+          "name": "标记消息已读",
+          "request": {
+            "method": "POST",
+            "url": {"raw": "{{base_url}}/api/notifications/1/read"}
+          }
+        }
+      ]
+    },
+    {
+      "name": "系统",
+      "item": [
+        {
+          "name": "健康检查",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/api/health"}
+          }
+        },
+        {
+          "name": "就绪检查",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/api/health/ready"}
+          }
+        }
+      ]
+    },
+    {
+      "name": "后台管理",
+      "item": [
+        {
+          "name": "待审核评价",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{admin_url}}/api/admin/reviews/pending"}
+          }
+        },
+        {
+          "name": "通过评价",
+          "request": {
+            "method": "POST",
+            "url": {"raw": "{{admin_url}}/api/admin/reviews/1/approve"}
+          }
+        },
+        {
+          "name": "驳回评价",
+          "request": {
+            "method": "POST",
+            "url": {"raw": "{{admin_url}}/api/admin/reviews/1/reject"}
+          }
+        },
+        {
+          "name": "封禁用户",
+          "request": {
+            "method": "POST",
+            "url": {"raw": "{{admin_url}}/api/admin/users/1/ban"}
+          }
+        },
+        {
+          "name": "解封用户",
+          "request": {
+            "method": "POST",
+            "url": {"raw": "{{admin_url}}/api/admin/users/1/unban"}
+          }
+        }
+      ]
+    }
+  ]
+}

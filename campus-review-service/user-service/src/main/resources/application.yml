@@ -1,0 +1,94 @@
+server:
+  port: 8101
+
+spring:
+  cloud:
+    compatibility-verifier:
+      enabled: false
+    nacos:
+      config:
+        enabled: false
+      discovery:
+        enabled: true
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+  application:
+    name: user-service
+  # 启动性能优化
+  main:
+    lazy-initialization: true
+  datasource:
+    url: jdbc:h2:mem:userdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      initialization-fail-timeout: -1
+  # Flyway 数据库迁移配置（开发环境使用 sql.init）
+  flyway:
+    enabled: false  # 开发环境使用 sql.init，生产环境启用 Flyway
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    lazy-loading-enabled: true
+    aggressive-lazy-loading: false
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:dev-secret-change-to-32-chars-min}
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+
+# Actuator 监控配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+info:
+  app:
+    name: ${spring.application.name}
+    version: @project.version@
+    java:
+      version: ${java.version}

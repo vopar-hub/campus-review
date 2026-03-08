@@ -1,0 +1,53 @@
+server:
+  port: 8105
+
+spring:
+  cloud:
+    compatibility-verifier:
+      enabled: false
+    nacos:
+      config:
+        enabled: false
+      discovery:
+        enabled: true
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+  application:
+    name: ranking-service
+  datasource:
+    url: jdbc:h2:mem:rankingdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+  # Redis 配置
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: ${REDIS_DATABASE:0}
+  cache:
+    type: redis
+    redis:
+      time-to-live: ${RANKING_CACHE_TTL:300000}
+      cache-null-values: false
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+
+downstream:
+  restaurant-service-base-url: ${RESTAURANT_SERVICE_URL:lb://restaurant-service}
+  interaction-service-base-url: ${INTERACTION_SERVICE_URL:lb://interaction-service}
+  review-service-base-url: ${REVIEW_SERVICE_URL:lb://review-service}
+
+ranking:
+  hot-restaurants:
+    refresh-ms: 60000
+    like-weight: 2.0
+    favorite-weight: 3.0
+    review-weight: 5.0
+    rating-weight: 10.0

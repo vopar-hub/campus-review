@@ -1,0 +1,31 @@
+server:
+  port: 8108
+
+spring:
+  cloud:
+    compatibility-verifier:
+      enabled: false
+    nacos:
+      config:
+        enabled: false
+      discovery:
+        enabled: true
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+  application:
+    name: admin-service
+  datasource:
+    url: jdbc:h2:mem:admindb;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  sql:
+    init:
+      mode: never
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+
+downstream:
+  user-service-base-url: ${USER_SERVICE_URL:lb://user-service}
+  review-service-base-url: ${REVIEW_SERVICE_URL:lb://review-service}
