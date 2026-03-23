@@ -4,20 +4,15 @@
 # 从 stdin 读取 hook 输入
 INPUT=$(cat)
 FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
-CONTENT=$(echo "$INPUT" | jq -r '.tool_input.content // empty')
-TRANSCRIPT_PATH=$(echo "$INPUT" | jq -r '.transcript_path // empty')
 
 # 如果没有文件路径，直接退出
 if [ -z "$FILE_PATH" ]; then
   exit 0
 fi
 
-# 获取项目根目录（优先使用环境变量，否则使用 pwd）
-PROJECT_ROOT="${CLAUDE_PROJECT_DIR:-$(pwd)}"
-PROJECT_ROOT="${PROJECT_ROOT//\\//}"  # 统一路径分隔符
-
-# 切换到项目根目录
-cd "$PROJECT_ROOT" || exit 0
+# 切换到当前目录（项目根目录）
+cd "$(pwd)" || exit 0
+PROJECT_ROOT="$(pwd)"
 
 # 检查是否是 git 仓库
 if ! git rev-parse --git-dir > /dev/null 2>&1; then
@@ -29,9 +24,25 @@ if [ ! -f "$FILE_PATH" ]; then
   exit 0
 fi
 
-# 获取文件的相对路径（处理 Windows 路径）
-RELATIVE_PATH="${FILE_PATH#$PROJECT_ROOT/}"
-# 如果还是绝对路径，尝试用反斜杠替换
+# 统一路径分隔符
+FILE_PATH_UNIX="${FILE_PATH//\\//}"
+PROJECT_ROOT_UNIX="$PROJECT_ROOT"
+
+# 获取文件的相对路径
+RELATIVE_PATH="${FILE_PATH_UNIX#$PROJECT_ROOT_UNIX/}"
+# 如果还是绝对路径，尝试其他可能的路径格式
+if [[ "$RELATIVE_PATH" == "$FILE_PATH_UNIX" ]]; then
+  # 尝试小写盘符
+  RELATIVE_PATH="${FILE_PATH_UNIX#/e/_CODE_/campus-review/}"
+fi
+if [[ "$RELATIVE_PATH" == "$FILE_PATH_UNIX" ]]; then
+  # 尝试大写盘符
+  RELATIVE_PATH="${FILE_PATH_UNIX#/E:/_CODE_/campus-review/}"
+fi
+if [[ "$RELATIVE_PATH" == "$FILE_PATH_UNIX" ]]; then
+  # 尝试原始路径
+  RELATIVE_PATH="${FILE_PATH#$PROJECT_ROOT/}"
+fi
 if [[ "$RELATIVE_PATH" == "$FILE_PATH" ]]; then
   RELATIVE_PATH="${FILE_PATH#$PROJECT_ROOT\\}"
 fi
