@@ -16,6 +16,6 @@ spring:
         file-extension: yaml
 
 downstream:
-  user-service-base-url: http://localhost:8103
+  user-service-base-url: http://localhost:8101
   review-service-base-url: http://localhost:8104
   restaurant-service-base-url: http://localhost:8102
