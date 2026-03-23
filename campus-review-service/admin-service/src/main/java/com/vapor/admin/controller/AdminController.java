@@ -2,9 +2,12 @@ package com.vapor.admin.controller;
 
 import com.vapor.admin.service.AdminOrchestratorService;
 import com.vapor.common.api.ApiResponse;
+import com.vapor.model.restaurant.RestaurantDTO;
 import com.vapor.model.review.ReviewDTO;
+import com.vapor.model.user.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -71,6 +74,17 @@ public class AdminController {
     }
 
     /**
+     * 获取用户列表。
+     *
+     * @return 用户列表
+     */
+    @GetMapping("/users")
+    @Operation(summary = "获取用户列表", description = "获取所有用户列表")
+    public ApiResponse<List<UserDTO>> getUserList() {
+        return ApiResponse.ok(adminOrchestratorService.getUserList());
+    }
+
+    /**
      * 封禁指定用户。
      *
      * @param id 用户 ID
@@ -93,6 +107,30 @@ public class AdminController {
     @Operation(summary = "解封用户", description = "解封指定用户账号")
     public ApiResponse<Void> unbanUser(@PathVariable Long id) {
         adminOrchestratorService.unbanUser(id);
+        return ApiResponse.ok(null);
+    }
+
+    /**
+     * 获取餐厅列表。
+     *
+     * @return 餐厅列表
+     */
+    @GetMapping("/restaurants")
+    @Operation(summary = "获取餐厅列表", description = "获取所有餐厅列表")
+    public ApiResponse<List<RestaurantDTO>> getRestaurantList() {
+        return ApiResponse.ok(adminOrchestratorService.getRestaurantList());
+    }
+
+    /**
+     * 删除指定餐厅。
+     *
+     * @param id 餐厅 ID
+     * @return 空响应体
+     */
+    @DeleteMapping("/restaurants/{id}")
+    @Operation(summary = "删除餐厅", description = "删除指定餐厅")
+    public ApiResponse<Void> deleteRestaurant(@PathVariable Long id) {
+        adminOrchestratorService.deleteRestaurant(id);
         return ApiResponse.ok(null);
     }
 }
