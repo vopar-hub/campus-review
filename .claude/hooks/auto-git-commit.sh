@@ -5,7 +5,7 @@
 INPUT=$(cat)
 FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 CONTENT=$(echo "$INPUT" | jq -r '.tool_input.content // empty')
-TOOL_NAME=$(echo "$INPUT" | jq -r '.hook_event_name // empty')
+TRANSCRIPT_PATH=$(echo "$INPUT" | jq -r '.transcript_path // empty')
 
 # 如果没有文件路径，直接退出
 if [ -z "$FILE_PATH" ]; then
@@ -34,19 +34,22 @@ RELATIVE_PATH="${FILE_PATH#$PROJECT_ROOT/}"
 # 根据文件类型生成提交信息前缀
 COMMIT_PREFIX="chore"
 if [[ "$RELATIVE_PATH" == *".java" ]]; then
-  if [[ "$CONTENT" == *"class "* ]] || [[ "$CONTENT" == *@* ]]; then
-    COMMIT_PREFIX="feat"
-  else
-    COMMIT_PREFIX="refactor"
-  fi
+  COMMIT_PREFIX="refactor"
 elif [[ "$RELATIVE_PATH" == *".xml" ]]; then
   COMMIT_PREFIX="build"
 elif [[ "$RELATIVE_PATH" == *"application"*".yml" ]] || [[ "$RELATIVE_PATH" == *"application"*".properties" ]]; then
   COMMIT_PREFIX="config"
 elif [[ "$RELATIVE_PATH" == *".md" ]]; then
   COMMIT_PREFIX="docs"
-elif [[ "$RELATIVE_PATH" == *"test"* ]]; then
-  COMMIT_PREFIX="test"
+fi
+
+# 检查是否是新增文件
+IS_NEW_FILE="false"
+if ! git status --porcelain "$RELATIVE_PATH" 2>/dev/null | grep -q "^A"; then
+  # 检查是否是之前未跟踪的文件
+  if git ls-files --others --exclude-standard "$RELATIVE_PATH" | grep -q .; then
+    IS_NEW_FILE="true"
+  fi
 fi
 
 # 添加文件到 git
@@ -54,11 +57,12 @@ git add "$RELATIVE_PATH" 2>/dev/null
 
 # 如果有变化，提交
 if ! git diff --cached --quiet 2>/dev/null; then
-  # 获取当前时间戳
-  TIMESTAMP=$(date "+%H:%M:%S")
-
   # 生成提交信息
-  COMMIT_MSG="$COMMIT_PREFIX: 更新 $RELATIVE_PATH [$TIMESTAMP]"
+  if [ "$IS_NEW_FILE" = "true" ]; then
+    COMMIT_MSG="$COMMIT_PREFIX: 新增 $RELATIVE_PATH"
+  else
+    COMMIT_MSG="$COMMIT_PREFIX: 修改 $RELATIVE_PATH"
+  fi
 
   git commit -m "$COMMIT_MSG" 2>/dev/null
 fi
