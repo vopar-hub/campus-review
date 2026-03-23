@@ -17,5 +17,5 @@ spring:
 
 downstream:
   user-service-base-url: http://localhost:8101
-  review-service-base-url: http://localhost:8104
+  review-service-base-url: http://localhost:8103
   restaurant-service-base-url: http://localhost:8102
