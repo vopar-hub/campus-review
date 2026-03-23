@@ -1,5 +1,9 @@
 package com.vapor.user.service;
 
+import com.vapor.model.user.UserDTO;
+
+import java.util.List;
+
 /**
  * 用户后台管理服务接口。
  *
@@ -20,4 +24,11 @@ public interface UserAdminService {
      * @param userId 用户 ID
      */
     void unban(Long userId);
+
+    /**
+     * 获取用户列表。
+     *
+     * @return 用户列表
+     */
+    List<UserDTO> getUserList();
 }
