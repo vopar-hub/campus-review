@@ -90,7 +90,7 @@ public class UserAdminServiceImpl implements UserAdminService {
                 entity.getStudentNo(),
                 entity.getNickname(),
                 entity.getRoles() != null ? Set.of(entity.getRoles().split(",")) : Set.of(),
-                entity.getBanned() != null && entity.getBanned(),
+                Boolean.TRUE.equals(entity.getBanned()),
                 entity.getCreatedAt()
         );
     }
