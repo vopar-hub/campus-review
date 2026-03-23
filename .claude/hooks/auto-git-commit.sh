@@ -28,8 +28,14 @@ if [ ! -f "$FILE_PATH" ]; then
   exit 0
 fi
 
-# 获取文件的相对路径
+# 获取文件的相对路径（处理 Windows 路径）
 RELATIVE_PATH="${FILE_PATH#$PROJECT_ROOT/}"
+# 如果还是绝对路径，尝试用反斜杠替换
+if [[ "$RELATIVE_PATH" == "$FILE_PATH" ]]; then
+  RELATIVE_PATH="${FILE_PATH#$PROJECT_ROOT\\}"
+fi
+# 统一路径分隔符
+RELATIVE_PATH="${RELATIVE_PATH//\\//}"
 
 # 根据文件类型生成提交信息前缀
 COMMIT_PREFIX="chore"
