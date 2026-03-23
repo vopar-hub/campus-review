@@ -1,13 +1,17 @@
 package com.vapor.user.controller;
 
 import com.vapor.common.api.ApiResponse;
+import com.vapor.model.user.UserDTO;
 import com.vapor.user.service.UserAdminService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * 用户后台管理接口（供后台网关转发）。
@@ -27,6 +31,17 @@ public class AdminUserController {
      */
     public AdminUserController(UserAdminService userAdminService) {
         this.userAdminService = userAdminService;
+    }
+
+    /**
+     * 获取用户列表。
+     *
+     * @return 用户列表
+     */
+    @GetMapping
+    @Operation(summary = "获取用户列表", description = "获取所有用户列表")
+    public ApiResponse<List<UserDTO>> getUserList() {
+        return ApiResponse.ok(userAdminService.getUserList());
     }
 
     /**
