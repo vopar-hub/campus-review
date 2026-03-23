@@ -1,8 +1,18 @@
 #!/bin/bash
-# auto-git-commit.sh - 在文件修改后自动提交 git
+# auto-git-commit.sh - 在文件修改后自动提交 git (调试版本)
 
 # 从 stdin 读取 hook 输入
 INPUT=$(cat)
+
+# 保存调试信息到文件
+echo "=== Hook 调试信息 ===" >> "/tmp/git-hook-debug.log"
+echo "时间：$(date)" >> "/tmp/git-hook-debug.log"
+echo "FILE_PATH: $FILE_PATH" >> "/tmp/git-hook-debug.log"
+echo "CLAUDE_PROJECT_DIR: $CLAUDE_PROJECT_DIR" >> "/tmp/git-hook-debug.log"
+echo "PWD: $(pwd)" >> "/tmp/git-hook-debug.log"
+echo "输入 JSON: $INPUT" >> "/tmp/git-hook-debug.log"
+echo "---" >> "/tmp/git-hook-debug.log"
+
 FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 
 # 如果没有文件路径，直接退出
@@ -50,6 +60,9 @@ fi
 RELATIVE_PATH="${RELATIVE_PATH//\\//}"
 # 移除可能的前导斜杠
 RELATIVE_PATH="${RELATIVE_PATH#/}"
+
+# 记录调试信息
+echo "RELATIVE_PATH: $RELATIVE_PATH" >> "/tmp/git-hook-debug.log"
 
 # 根据文件类型生成提交信息前缀
 COMMIT_PREFIX="chore"
