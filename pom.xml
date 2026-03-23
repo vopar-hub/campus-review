@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.11</version>
+        <version>3.2.12</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.vapor</groupId>
@@ -19,6 +19,7 @@
     <properties>
         <java.version>17</java.version>
         <spring-cloud.version>2023.0.5</spring-cloud.version>
+        <com.alibaba.cloud>2.2.5.RELEASE</com.alibaba.cloud>
     </properties>
 
     <modules>
@@ -39,6 +40,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.18.38</version>
             <optional>true</optional>
         </dependency>
 
@@ -52,6 +54,20 @@
                 <version>${spring-cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!--spring cloud alibaba-->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${com.alibaba.cloud}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-commons</artifactId>
+                <version>2023.0.3.2</version>
+
             </dependency>
 
             <!-- 项目模块依赖管理 -->
@@ -137,12 +153,7 @@
                 <version>2.3.0</version>
             </dependency>
 
-            <!-- Redis -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-redis</artifactId>
-                <version>3.5.11</version>
-            </dependency>
+
 
             <!-- Spring Boot Actuator -->
             <dependency>
@@ -169,6 +180,14 @@
                 <artifactId>flyway-mysql</artifactId>
                 <version>9.22.3</version>
             </dependency>
+
+            <!-- MySQL Connector/J -->
+            <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>8.2.0</version>
+                <scope>runtime</scope>
+            </dependency>
         </dependencies>
 
     </dependencyManagement>
@@ -183,6 +202,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

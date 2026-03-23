@@ -1,4 +1,4 @@
--- schema.sql for H2 development database
+-- schema.sql for MySQL database
 -- notification-service 专用 schema
 
 -- 消息表
@@ -11,6 +11,6 @@ CREATE TABLE IF NOT EXISTS messages (
     read_flag BOOLEAN DEFAULT FALSE,
     read_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX IF NOT EXISTS idx_messages_to_user ON messages(to_user_id, read_flag);
+CREATE INDEX idx_messages_to_user ON messages(to_user_id, read_flag);

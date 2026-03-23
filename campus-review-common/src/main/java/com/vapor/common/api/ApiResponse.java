@@ -1,6 +1,7 @@
 package com.vapor.common.api;
 
 import com.vapor.common.error.ErrorCode;
+import lombok.Getter;
 
 import java.time.Instant;
 
@@ -9,11 +10,37 @@ import java.time.Instant;
  *
  * @param <T> data 字段的数据类型
  */
+@Getter
 public class ApiResponse<T> {
+    /**
+     * -- GETTER --
+     *  获取业务码。
+     *
+     */
     private final int code;
+    /**
+     * -- GETTER --
+     *  获取提示信息。
+     *
+     */
     private final String message;
+    /**
+     * -- GETTER --
+     *  获取响应数据。
+     *
+     */
     private final T data;
+    /**
+     * -- GETTER --
+     *  获取请求 ID。
+     *
+     */
     private final String requestId;
+    /**
+     * -- GETTER --
+     *  获取时间戳（毫秒）。
+     *
+     */
     private final long timestamp;
 
     /**
@@ -69,48 +96,4 @@ public class ApiResponse<T> {
         return new ApiResponse<>(errorCode.getCode(), message, null, requestId, Instant.now().toEpochMilli());
     }
 
-    /**
-     * 获取业务码。
-     *
-     * @return 业务码
-     */
-    public int getCode() {
-        return code;
-    }
-
-    /**
-     * 获取提示信息。
-     *
-     * @return 提示信息
-     */
-    public String getMessage() {
-        return message;
-    }
-
-    /**
-     * 获取响应数据。
-     *
-     * @return 响应数据
-     */
-    public T getData() {
-        return data;
-    }
-
-    /**
-     * 获取请求 ID。
-     *
-     * @return 请求 ID
-     */
-    public String getRequestId() {
-        return requestId;
-    }
-
-    /**
-     * 获取时间戳（毫秒）。
-     *
-     * @return 时间戳
-     */
-    public long getTimestamp() {
-        return timestamp;
-    }
 }

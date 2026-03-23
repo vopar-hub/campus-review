@@ -1,4 +1,4 @@
--- schema.sql for H2 development database
+-- schema.sql for MySQL database
 -- restaurant-service 专用 schema
 
 -- 餐馆表
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS restaurants (
     status VARCHAR(20) DEFAULT 'ACTIVE',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX IF NOT EXISTS idx_restaurants_campus ON restaurants(campus);
-CREATE INDEX IF NOT EXISTS idx_restaurants_status ON restaurants(status);
+CREATE INDEX idx_restaurants_campus ON restaurants(campus);
+CREATE INDEX idx_restaurants_status ON restaurants(status);

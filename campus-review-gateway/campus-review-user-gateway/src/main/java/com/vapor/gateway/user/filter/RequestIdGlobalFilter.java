@@ -1,5 +1,6 @@
 package com.vapor.gateway.user.filter;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.core.Ordered;
@@ -14,7 +15,10 @@ import java.util.UUID;
  *
  * 为每个请求生成或复用 X-Request-Id，并同时写入响应头与下游请求头，便于链路追踪。
  */
+@Slf4j
 public class RequestIdGlobalFilter implements GlobalFilter, Ordered {
+
+
     public static final String HEADER = "X-Request-Id";
 
     /**
@@ -26,6 +30,7 @@ public class RequestIdGlobalFilter implements GlobalFilter, Ordered {
      */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        log.info("进入RequestIdGlobalFilter...");
         String requestId = exchange.getRequest().getHeaders().getFirst(HEADER);
         if (requestId == null || requestId.isBlank()) {
             requestId = UUID.randomUUID().toString();
@@ -42,6 +47,6 @@ public class RequestIdGlobalFilter implements GlobalFilter, Ordered {
      */
     @Override
     public int getOrder() {
-        return -1000;
+        return 0;
     }
 }

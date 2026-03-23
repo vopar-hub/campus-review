@@ -1,6 +1,6 @@
 package com.vapor.model.auth;
 
-import com.vapor.common.validation.Password;
+import com.vapor.model.validation.Password;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

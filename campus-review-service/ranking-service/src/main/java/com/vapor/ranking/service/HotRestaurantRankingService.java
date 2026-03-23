@@ -1,6 +1,5 @@
 package com.vapor.ranking.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.vapor.common.api.ApiResponse;
 import com.vapor.model.interaction.InteractionCountDTO;
 import com.vapor.model.ranking.HotRestaurantRankItemDTO;
@@ -11,9 +10,9 @@ import com.vapor.ranking.mapper.HotRestaurantRankMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,11 +22,13 @@ import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * 热门餐馆排行榜服务。
  *
  * 定时从下游服务拉取餐馆、互动与评价数据，根据权重计算热度并落库。
+ * 排行榜数据同时存储到数据库和 Redis ZSet 中，查询时直接从 Redis 获取。
  */
 @Service
 public class HotRestaurantRankingService {
@@ -41,6 +42,9 @@ public class HotRestaurantRankingService {
     private final double favoriteWeight;
     private final double reviewWeight;
     private final double ratingWeight;
+    private final int minReviewCount;
+    private final double minRating;
+    private final String redisKey;
 
     private static final ParameterizedTypeReference<ApiResponse<List<RestaurantDTO>>> RESTAURANT_LIST_TYPE =
             new ParameterizedTypeReference<>() {};
@@ -51,6 +55,7 @@ public class HotRestaurantRankingService {
 
     private final RestClient restClient;
     private final HotRestaurantRankMapper hotRestaurantRankMapper;
+    private final StringRedisTemplate redisTemplate;
     private final String restaurantBaseUrl;
     private final String interactionBaseUrl;
     private final String reviewBaseUrl;
@@ -67,20 +72,29 @@ public class HotRestaurantRankingService {
      * @param favoriteWeight 收藏权重（从配置文件读取，默认 3.0）
      * @param reviewWeight 评价权重（从配置文件读取，默认 5.0）
      * @param ratingWeight 评分权重（从配置文件读取，默认 10.0）
+     * @param minReviewCount 最小评论数要求（从配置文件读取，默认 5）
+     * @param minRating 最小评分要求（从配置文件读取，默认 3.0）
+     * @param redisKey Redis 中存储排行榜的 key（从配置文件读取）
+     * @param redisTemplate Redis 模板
      */
     public HotRestaurantRankingService(
             RestClient restClient,
             HotRestaurantRankMapper hotRestaurantRankMapper,
-            @Value("${downstream.restaurant-service-base-url}") String restaurantBaseUrl,
-            @Value("${downstream.interaction-service-base-url}") String interactionBaseUrl,
-            @Value("${downstream.review-service-base-url}") String reviewBaseUrl,
+            StringRedisTemplate redisTemplate,
+            @Value("${downstream.restaurant-service-base-url:http://localhost:8102}") String restaurantBaseUrl,
+            @Value("${downstream.interaction-service-base-url:http://localhost:8104}") String interactionBaseUrl,
+            @Value("${downstream.review-service-base-url:http://localhost:8103}") String reviewBaseUrl,
             @Value("${ranking.hot-restaurants.like-weight:2.0}") double likeWeight,
             @Value("${ranking.hot-restaurants.favorite-weight:3.0}") double favoriteWeight,
             @Value("${ranking.hot-restaurants.review-weight:5.0}") double reviewWeight,
-            @Value("${ranking.hot-restaurants.rating-weight:10.0}") double ratingWeight
+            @Value("${ranking.hot-restaurants.rating-weight:10.0}") double ratingWeight,
+            @Value("${ranking.hot-restaurants.min-review-count:5}") int minReviewCount,
+            @Value("${ranking.hot-restaurants.min-rating:3.0}") double minRating,
+            @Value("${ranking.hot-restaurants.redis-key:ranking:hot-restaurants}") String redisKey
     ) {
         this.restClient = restClient;
         this.hotRestaurantRankMapper = hotRestaurantRankMapper;
+        this.redisTemplate = redisTemplate;
         this.restaurantBaseUrl = restaurantBaseUrl;
         this.interactionBaseUrl = interactionBaseUrl;
         this.reviewBaseUrl = reviewBaseUrl;
@@ -88,16 +102,21 @@ public class HotRestaurantRankingService {
         this.favoriteWeight = favoriteWeight;
         this.reviewWeight = reviewWeight;
         this.ratingWeight = ratingWeight;
+        this.minReviewCount = minReviewCount;
+        this.minRating = minRating;
+        this.redisKey = redisKey;
     }
 
     /**
      * 定时刷新热门餐馆榜数据。
      *
      * 刷新策略：拉取全量餐馆列表，对每个餐馆计算热度分并按分数降序排序，最终写入榜单表。
+     * 进入排行榜的标准：
+     * 1. 评论数大于 5 条
+     * 2. 评分大于 3 分
      */
-    @CacheEvict(value = "ranking:hot-restaurants", allEntries = true)
     @Transactional
-    @Scheduled(fixedDelayString = "${ranking.hot-restaurants.refresh-ms:60000}")
+    @Scheduled(fixedDelayString = "${ranking.hot-restaurants.refresh-ms:10000}")
     public void refreshHotRestaurants() {
         log.info("开始刷新热门餐馆排行榜");
 
@@ -114,7 +133,7 @@ public class HotRestaurantRankingService {
         int deleted = hotRestaurantRankMapper.delete(null);
         log.info("清空旧榜单，删除 {} 条记录", deleted);
 
-        // 写入新榜单
+        // 写入新榜单到数据库
         Instant now = Instant.now();
         long rank = 1;
         for (ScoredRestaurant item : scored) {
@@ -125,39 +144,94 @@ public class HotRestaurantRankingService {
             entity.setUpdatedAt(now);
             hotRestaurantRankMapper.insert(entity);
         }
-        log.info("热门餐馆排行榜刷新完成，共 {} 家餐馆", scored.size());
+
+        // 写入 Redis ZSet
+        updateRedisRanking(scored);
+
+        log.info("热门餐馆排行榜刷新完成，共 {} 家餐馆符合条件", scored.size());
+    }
+
+    /**
+     * 将排行榜数据更新到 Redis ZSet。
+     *
+     * @param scored 评分后的餐馆列表（已排序）
+     */
+    private void updateRedisRanking(List<ScoredRestaurant> scored) {
+        // 删除旧榜单
+        redisTemplate.delete(redisKey);
+
+        // 使用 ZSet 存储排行榜，score 作为排序依据
+        Set<ZSetOperations.TypedTuple<String>> tuples = new java.util.LinkedHashSet<>();
+        for (ScoredRestaurant item : scored) {
+            String member = String.valueOf(item.restaurant().id());
+            tuples.add(new ZSetOperations.TypedTuple<String>() {
+                @Override
+                public String getValue() {
+                    return member;
+                }
+                @Override
+                public Double getScore() {
+                    return item.score();
+                }
+                @Override
+                public int compareTo(ZSetOperations.TypedTuple<String> other) {
+                    return Double.compare(other.getScore(), item.score());
+                }
+            });
+        }
+
+        if (!tuples.isEmpty()) {
+            redisTemplate.opsForZSet().add(redisKey, tuples);
+            log.info("Redis 排行榜已更新，共 {} 家餐馆", tuples.size());
+        }
     }
 
     /**
      * 查询热门餐馆榜 Top N。
+     * 直接从 Redis ZSet 中获取数据。
      *
      * @param topN 返回 Top N，最小为 1
      * @return 排行榜条目
      */
-    @Cacheable(value = "ranking:hot-restaurants", key = "'top:' + #topN", unless = "#result.isEmpty()")
     public List<HotRestaurantRankItemDTO> top(int topN) {
         log.debug("查询热门餐馆榜 Top {}", topN);
 
-        List<HotRestaurantRankEntity> entities = hotRestaurantRankMapper.selectList(new LambdaQueryWrapper<HotRestaurantRankEntity>()
-                .orderByAsc(HotRestaurantRankEntity::getRank)
-                .last("limit " + Math.max(1, topN)));
+        // 从 Redis ZSet 获取排名
+        Set<ZSetOperations.TypedTuple<String>> tuples = redisTemplate.opsForZSet()
+                .reverseRangeWithScores(redisKey, 0, Math.max(1, topN) - 1);
 
-        log.debug("查询到 {} 条榜单记录", entities.size());
+        if (tuples == null || tuples.isEmpty()) {
+            log.debug("Redis 中暂无排行榜数据");
+            return List.of();
+        }
 
-        // 注意：这里应该缓存餐馆列表避免重复调用
-        List<RestaurantDTO> restaurants = fetchRestaurants();
-        return entities.stream()
-                .map(e -> new HotRestaurantRankItemDTO(
-                        e.getRank(),
-                        e.getRestaurantId(),
-                        restaurants.stream()
-                                .filter(r -> Objects.equals(r.id(), e.getRestaurantId()))
-                                .map(RestaurantDTO::name)
-                                .findFirst()
-                                .orElse(null),
-                        e.getScore() == null ? 0.0 : e.getScore()
-                ))
+        // 获取所有餐馆 ID
+        List<Long> restaurantIds = tuples.stream()
+                .map(ZSetOperations.TypedTuple::getValue)
+                .filter(Objects::nonNull)
+                .map(Long::parseLong)
                 .toList();
+
+        // 批量获取餐馆信息
+        List<RestaurantDTO> restaurants = fetchRestaurantsByIds(restaurantIds);
+
+        List<HotRestaurantRankItemDTO> result = new java.util.ArrayList<>();
+        long rank = 1;
+        for (ZSetOperations.TypedTuple<String> tuple : tuples) {
+            Long restaurantId = Long.parseLong(tuple.getValue());
+            String restaurantName = restaurants.stream()
+                    .filter(r -> Objects.equals(r.id(), restaurantId))
+                    .map(RestaurantDTO::name)
+                    .findFirst()
+                    .orElse("Unknown");
+            result.add(new HotRestaurantRankItemDTO(
+                    rank++,
+                    restaurantId,
+                    restaurantName,
+                    tuple.getScore() != null ? tuple.getScore() : 0.0
+            ));
+        }
+        return result;
     }
 
     /**
@@ -179,10 +253,40 @@ public class HotRestaurantRankingService {
     }
 
     /**
+     * 根据 ID 列表批量获取餐馆信息。
+     *
+     * @param ids 餐馆 ID 列表
+     * @return 餐馆列表
+     */
+    private List<RestaurantDTO> fetchRestaurantsByIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+        try {
+            String url = restaurantBaseUrl + "/api/restaurants/by-ids?ids=" +
+                    String.join(",", ids.stream().map(String::valueOf).toList());
+            ApiResponse<List<RestaurantDTO>> resp = restClient.get()
+                    .uri(url)
+                    .retrieve()
+                    .body(RESTAURANT_LIST_TYPE);
+            return resp == null || resp.getData() == null ? List.of() : resp.getData();
+        } catch (Exception e) {
+            log.error("批量拉取餐馆列表失败：ids={}, error={}", ids, e.getMessage(), e);
+            // 降级：返回全量餐馆列表并过滤
+            return fetchRestaurants().stream()
+                    .filter(r -> ids.contains(r.id()))
+                    .toList();
+        }
+    }
+
+    /**
      * 计算单个餐馆的热度分。
+     * 只有满足以下条件的餐馆才会被计算热度分：
+     * 1. 评论数大于 5 条
+     * 2. 评分大于 3 分
      *
      * @param restaurant 餐馆信息
-     * @return 评分结果；输入非法时返回 null
+     * @return 评分结果；输入非法时或不满足条件时返回 null
      */
     private ScoredRestaurant score(RestaurantDTO restaurant) {
         if (restaurant == null || restaurant.id() == null) {
@@ -191,7 +295,19 @@ public class HotRestaurantRankingService {
 
         InteractionCountDTO counts = fetchCounts(restaurant.id());
         List<ReviewDTO> reviews = fetchReviews(restaurant.id());
+
+        // 不满足条件：评论数 <= 5 或 评分 <= 3
+        if (reviews.size() <= minReviewCount) {
+            log.debug("餐馆 {} 评论数不足，跳过：reviewCount={}", restaurant.id(), reviews.size());
+            return null;
+        }
+
         double avgRating = reviews.isEmpty() ? 0.0 : reviews.stream().mapToInt(ReviewDTO::rating).average().orElse(0.0);
+
+        if (avgRating <= minRating) {
+            log.debug("餐馆 {} 评分不足，跳过：avgRating={}", restaurant.id(), avgRating);
+            return null;
+        }
 
         // 热度分 = 点赞数*权重 + 收藏数*权重 + 评价数*权重 + 平均分*权重
         double score = counts.likeCount() * likeWeight

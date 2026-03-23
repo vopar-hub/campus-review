@@ -1,11 +1,20 @@
 package com.vapor.common.error;
 
+import lombok.Getter;
+
 /**
  * 业务异常。
  *
  * 通过携带 {@link ErrorCode} 在全局异常处理中转换为统一响应体。
  */
+@Getter
 public class BizException extends RuntimeException {
+    /**
+     * -- GETTER --
+     *  获取错误码。
+     *
+     * @return 错误码
+     */
     private final ErrorCode errorCode;
 
     /**
@@ -29,12 +38,4 @@ public class BizException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
-    /**
-     * 获取错误码。
-     *
-     * @return 错误码
-     */
-    public ErrorCode getErrorCode() {
-        return errorCode;
-    }
 }

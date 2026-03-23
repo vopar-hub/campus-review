@@ -9,8 +9,10 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.Contact;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -43,35 +45,47 @@ public class UserServiceConfig {
     }
 
     /**
-     * 请求 ID 过滤器。
+     * 请求 ID 过滤器注册。
      *
-     * @return 请求 ID 过滤器
+     * @return 过滤器注册 Bean
      */
     @Bean
-    public RequestIdFilter requestIdFilter() {
-        return new RequestIdFilter();
+    public FilterRegistrationBean<RequestIdFilter> requestIdFilterRegistration() {
+        FilterRegistrationBean<RequestIdFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(new RequestIdFilter());
+        registration.addUrlPatterns("/*");
+        registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return registration;
     }
 
     /**
-     * 请求日志过滤器。
+     * 请求日志过滤器注册。
      *
-     * @return 请求日志过滤器
+     * @return 过滤器注册 Bean
      */
     @Bean
-    public RequestLoggingFilter requestLoggingFilter() {
-        return new RequestLoggingFilter();
+    public FilterRegistrationBean<RequestLoggingFilter> requestLoggingFilterRegistration() {
+        FilterRegistrationBean<RequestLoggingFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(new RequestLoggingFilter());
+        registration.addUrlPatterns("/*");
+        registration.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
+        return registration;
     }
 
     /**
-     * 用户上下文过滤器。
+     * 用户上下文过滤器注册。
      *
      * 从请求头解析用户信息并写入线程上下文。
      *
-     * @return 用户上下文过滤器
+     * @return 过滤器注册 Bean
      */
     @Bean
-    public UserContextFilter userContextFilter() {
-        return new UserContextFilter();
+    public FilterRegistrationBean<UserContextFilter> userContextFilterRegistration() {
+        FilterRegistrationBean<UserContextFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(new UserContextFilter());
+        registration.addUrlPatterns("/*");
+        registration.setOrder(Ordered.HIGHEST_PRECEDENCE + 2);
+        return registration;
     }
 
     /**

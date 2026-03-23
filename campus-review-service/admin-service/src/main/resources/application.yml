@@ -1,54 +1,16 @@
+
 server:
   port: 8108
 
 spring:
-  cloud:
-    compatibility-verifier:
-      enabled: false
-    nacos:
-      config:
-        enabled: false
-      discovery:
-        enabled: true
-        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
   application:
     name: admin-service
-
-springdoc:
-  api-docs:
-    enabled: true
-    path: /v3/api-docs
-  swagger-ui:
-    enabled: true
-    path: /swagger-ui.html
-
-# Actuator 监控配置
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,prometheus
-  endpoint:
-    health:
-      show-details: always
-      probes:
-        enabled: true
-  info:
-    env:
-      enabled: true
-  metrics:
-    tags:
-      application: ${spring.application.name}
-  prometheus:
-    metrics:
-      export:
-        enabled: true
-
-info:
-  app:
-    name: ${spring.application.name}
-    version: @project.version@
-
-downstream:
-  user-service-base-url: ${USER_SERVICE_URL:lb://user-service}
-  review-service-base-url: ${REVIEW_SERVICE_URL:lb://review-service}
+  config:
+    import[0]: optional:nacos:admin-service.yaml?group=DEFAULT_GROUP
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: localhost:8848
+        file-extension: yaml

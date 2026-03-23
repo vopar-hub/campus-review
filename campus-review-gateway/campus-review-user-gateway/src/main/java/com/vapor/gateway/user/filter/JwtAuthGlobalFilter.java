@@ -61,44 +61,52 @@ public class JwtAuthGlobalFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getPath().value();
+        String requestId = exchange.getRequest().getHeaders().getFirst(RequestIdGlobalFilter.HEADER);
 
         if (shouldSkip(exchange)) {
-            log.debug("跳过鉴权：path={}", path);
+            log.debug("跳过鉴权：requestId={}, path={}", requestId, path);
             return chain.filter(exchange);
         }
 
         String auth = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (auth == null || !auth.startsWith("Bearer ")) {
-            log.warn("鉴权失败 - 缺少 Authorization 头：path={}", path);
+            log.warn("鉴权失败 - 缺少 Authorization 头：requestId={}, path={}", requestId, path);
             return unauthorized(exchange);
         }
 
         String token = auth.substring("Bearer ".length()).trim();
+        log.info("[JwtAuthGlobalFilter] 开始 JWT 鉴权 - requestId={}, path={}, tokenPrefix={}", 
+                requestId, path, token.length() > 20 ? token.substring(0, 20) + "..." : token);
+
+        
         try {
             JwtClaims claims = jwtService.parseAndValidate(token);
-            log.debug("鉴权成功：userId={}, path={}", claims.userId(), path);
+            log.info("[JwtAuthGlobalFilter] 鉴权成功 - requestId={}, userId={}, roles={}", 
+                    requestId, claims.userId(), claims.roles());
             ServerHttpRequest mutated = exchange.getRequest().mutate()
                     .header("X-User-Id", String.valueOf(claims.userId()))
                     .header("X-User-Roles", String.join(",", safeRoles(claims.roles())))
                     .build();
+
+
             return chain.filter(exchange.mutate().request(mutated).build());
         } catch (ExpiredJwtException e) {
-            log.info("Token 已过期：path={}", path);
+            log.info("Token 已过期：requestId={}, path={}", requestId, path);
             return unauthorized(exchange);
         } catch (MalformedJwtException e) {
-            log.warn("Token 格式错误：path={}, error={}", path, e.getMessage());
+            log.warn("Token 格式错误：requestId={}, path={}, error={}", requestId, path, e.getMessage());
             return unauthorized(exchange);
         } catch (UnsupportedJwtException e) {
-            log.warn("不支持的 Token 类型：path={}", path);
+            log.warn("不支持的 Token 类型：requestId={}, path={}", requestId, path);
             return unauthorized(exchange);
         } catch (JwtException e) {
-            log.warn("JWT 验证失败：path={}, error={}", path, e.getMessage());
+            log.warn("JWT 验证失败：requestId={}, path={}, error={}", requestId, path, e.getMessage());
             return unauthorized(exchange);
         } catch (IllegalArgumentException e) {
-            log.warn("无效的 Token：path={}, error={}", path, e.getMessage());
+            log.warn("无效的 Token：requestId={}, path={}, error={}", requestId, path, e.getMessage());
             return unauthorized(exchange);
         } catch (Exception ex) {
-            log.error("鉴权异常：path={}, error={}", path, ex.getMessage(), ex);
+            log.error("鉴权异常：requestId={}, path={}, error={}", requestId, path, ex.getMessage(), ex);
             return unauthorized(exchange);
         }
     }
@@ -182,6 +190,6 @@ public class JwtAuthGlobalFilter implements GlobalFilter, Ordered {
      */
     @Override
     public int getOrder() {
-        return -900;
+        return 2;
     }
 }

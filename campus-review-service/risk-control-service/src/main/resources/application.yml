@@ -2,59 +2,14 @@ server:
   port: 8107
 
 spring:
-  cloud:
-    compatibility-verifier:
-      enabled: false
-    nacos:
-      config:
-        enabled: false
-      discovery:
-        enabled: true
-        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
   application:
     name: risk-control-service
-  # Redis 配置（用于分布式限流）
-  data:
-    redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:}
-      database: ${REDIS_DATABASE:0}
-
-risk:
-  keywords: spam，广告
-
-springdoc:
-  api-docs:
-    enabled: true
-    path: /v3/api-docs
-  swagger-ui:
-    enabled: true
-    path: /swagger-ui.html
-
-# Actuator 监控配置
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,prometheus
-  endpoint:
-    health:
-      show-details: always
-      probes:
-        enabled: true
-  info:
-    env:
-      enabled: true
-  metrics:
-    tags:
-      application: ${spring.application.name}
-  prometheus:
-    metrics:
-      export:
-        enabled: true
-
-info:
-  app:
-    name: ${spring.application.name}
-    version: @project.version@
+  config:
+    import[0]: optional:nacos:risk-control-service.yaml?group=DEFAULT_GROUP
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+      config:
+        server-addr: localhost:8848
+        file-extension: yaml

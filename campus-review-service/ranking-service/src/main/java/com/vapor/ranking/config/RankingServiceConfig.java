@@ -63,13 +63,20 @@ public class RankingServiceConfig {
      */
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory factory) {
+        // 配置 Jackson ObjectMapper 不写类型信息
+        com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        objectMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
+        objectMapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer jsonSerializer =
+                new org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer(objectMapper);
+
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(5))
                 .disableCachingNullValues()
                 .serializeKeysWith(org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair.fromSerializer(
                         org.springframework.data.redis.serializer.RedisSerializer.string()))
-                .serializeValuesWith(org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair.fromSerializer(
-                        org.springframework.data.redis.serializer.RedisSerializer.json()));
+                .serializeValuesWith(org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair.fromSerializer(jsonSerializer));
         return RedisCacheManager.builder(factory)
                 .cacheDefaults(config)
                 .withCacheConfiguration("ranking:hot-restaurants", config.entryTtl(Duration.ofMinutes(5)))

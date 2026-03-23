@@ -2,6 +2,7 @@ package com.vapor.ranking.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -19,6 +20,7 @@ public class HotRestaurantRankEntity {
     private Long id;
     private Long restaurantId;
     private Double score;
+    @TableField("`rank`")
     private Long rank;
     private Instant updatedAt;
 }

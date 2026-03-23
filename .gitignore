@@ -1,4 +1,6 @@
-# .gitignore for Campus Review Project
+# ===============================
+# Java/Spring Boot 项目 .gitignore
+# ===============================
 
 # Compiled class files
 *.class
@@ -10,8 +12,11 @@ logs/
 # Package files
 *.jar
 *.war
-*.ear
 *.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
 
 # Maven
 target/
@@ -25,45 +30,90 @@ buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
 
-# IDE
+# Gradle (if used in future)
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# IDE - IntelliJ IDEA
 .idea/
 *.iml
-*.ipr
 *.iws
-.project
-.classpath
-.settings/
-.vscode/
-*.swp
-*.swo
-*~
+*.ipr
+.out/
+ideaOutputFolder/
 
-# OS
+# IDE - Eclipse
+.classpath
+.project
+.settings/
+.bin/
+
+# IDE - VSCode
+.vscode/*
+!.vscode/extensions.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# Spring Boot specific
+application-local.yml
+application-local.properties
+*.local.yml
+*.local.properties
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Secrets and credentials
+**/secret*
+**/credentials*
+**/*.keystore
+**/*.jks
+
+# Docker
+*.pid
+docker-compose.override.yml
+
+# OS files
 .DS_Store
 Thumbs.db
 Desktop.ini
 
-# Application specific
-application-local.yml
-application-local.properties
-*.env
-*.key
-*.crt
-*.pem
-
-# Test coverage
-coverage/
-cobertura.ser
-
 # Temporary files
-tmp/
-temp/
 *.tmp
-build_*.txt
+*.bak
+*.swp
+*~
 
-# H2 database (for local dev)
-*.db
-*.trace.db
+# Native image (GraalVM)
+*.pid
+*.lib
+*.a
 
-# Swagger/OpenAPI generated files
-swagger-ui/api-docs.json
+# JRebel
+**/rebel.xml
+
+# JProfiler
+.profiler/
+
+# Flyway (if using local migrations)
+**/db/migration/local/
+
+# Test output
+test-output/
+surefire-reports/
+failsafe-reports/
+
+# Coverage
+coverage/
+*.exec
+jacoco.exec
+htmlcov/
+.nyc_output/
+
+# Frontend (has its own git repository)
+campus-review-frontend/

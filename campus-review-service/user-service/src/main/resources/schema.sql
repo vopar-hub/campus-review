@@ -1,4 +1,4 @@
--- schema.sql for H2 development database
+-- schema.sql for MySQL database
 -- user-service 专用 schema
 
 -- 用户表
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
     ban_until TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_student_no ON users(student_no);

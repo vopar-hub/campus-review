@@ -1,75 +1,18 @@
 server:
   port: 8001
-  # 请求体大小限制
-  http:
-    max-header-size: 8KB
-    max-initial-line-length: 4KB
 
 spring:
   application:
     name: user-gateway
-  main:
-    web-application-type: reactive
+  config:
+    import[0]: optional:nacos:user-gateway.yaml?group=DEFAULT_GROUP
   cloud:
-    compatibility-verifier:
-      enabled: false
     nacos:
+      discovery:
+        server-addr: localhost:8848
       config:
-        enabled: false
-      discovery:
-        enabled: true
-        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
-    gateway:
-      httpclient:
-        connect-timeout: 5000
-        response-timeout: 30s
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins: "*"
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - OPTIONS
-            allowedHeaders: "*"
-            maxAge: 3600
-            allowCredentials: true
-      discovery:
-        locator:
+        server-addr: localhost:8848
+        file-extension: yaml
+        import-check:
           enabled: true
-          lower-case-service-id: true
-      routes:
-        - id: user-service
-          uri: lb://user-service
-          predicates:
-            - Path=/api/auth/**,/api/users/**
-        - id: restaurant-service
-          uri: lb://restaurant-service
-          predicates:
-            - Path=/api/restaurants/**
-        - id: review-service
-          uri: lb://review-service
-          predicates:
-            - Path=/api/reviews/**
-        - id: interaction-service
-          uri: lb://interaction-service
-          predicates:
-            - Path=/api/interactions/**
-        - id: ranking-service
-          uri: lb://ranking-service
-          predicates:
-            - Path=/api/rankings/**
-        - id: notification-service
-          uri: lb://notification-service
-          predicates:
-            - Path=/api/notifications/**
-        - id: risk-control-service
-          uri: lb://risk-control-service
-          predicates:
-            - Path=/api/risk/**
 
-security:
-  jwt:
-    secret: ${JWT_SECRET:dev-secret-change-to-32-chars-min}

@@ -1,8 +1,11 @@
 package com.vapor.common.enums;
 
+import lombok.Getter;
+
 /**
  * 评价状态枚举。
  */
+@Getter
 public enum ReviewStatus {
     /**
      * 待审核
@@ -23,10 +26,6 @@ public enum ReviewStatus {
 
     ReviewStatus(String code) {
         this.code = code;
-    }
-
-    public String getCode() {
-        return code;
     }
 
     /**

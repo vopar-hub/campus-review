@@ -2,67 +2,23 @@ server:
   port: 8102
 
 spring:
-  cloud:
-    compatibility-verifier:
-      enabled: false
-    nacos:
-      config:
-        enabled: false
-      discovery:
-        enabled: true
-        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
   application:
     name: restaurant-service
-  datasource:
-    url: jdbc:h2:mem:restaurantdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-  sql:
-    init:
-      mode: always
-      schema-locations: classpath:schema.sql
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+  config:
+    import[0]: optional:nacos:restaurant-service.yaml?group=DEFAULT_GROUP
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+      config:
+        server-addr: localhost:8848
+        file-extension: yaml
+        import-check:
+          enabled: true
 
-mybatis-plus:
-  configuration:
-    map-underscore-to-camel-case: true
-    cache-enabled: false
-
-springdoc:
-  api-docs:
-    enabled: true
-    path: /v3/api-docs
-  swagger-ui:
-    enabled: true
-    path: /swagger-ui.html
-
-# Actuator 监控配置
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,prometheus
-  endpoint:
-    health:
-      show-details: always
-      probes:
-        enabled: true
-  info:
-    env:
-      enabled: true
-  metrics:
-    tags:
-      application: ${spring.application.name}
-  prometheus:
-    metrics:
-      export:
-        enabled: true
-
-info:
-  app:
-    name: ${spring.application.name}
-    version: @project.version@
+# MinIO 配置
+minio:
+  endpoint: http://localhost:9000
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket-name: campus-review

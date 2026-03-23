@@ -2,41 +2,36 @@ server:
   port: 8105
 
 spring:
-  cloud:
-    compatibility-verifier:
-      enabled: false
-    nacos:
-      config:
-        enabled: false
-      discovery:
-        enabled: true
-        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
   application:
     name: ranking-service
   datasource:
-    url: jdbc:h2:mem:rankingdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-  sql:
-    init:
-      mode: always
-      schema-locations: classpath:schema.sql
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-  # Redis 配置
+    url: jdbc:mysql://localhost:3306/campus_ranking?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: "1234"
+  config:
+    import: optional:nacos:ranking-service.yaml?group=DEFAULT_GROUP
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        ip: 127.0.0.1
+      config:
+        server-addr: localhost:8848
+        file-extension: yaml
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:}
-      database: ${REDIS_DATABASE:0}
+      host: localhost
+      port: 6379
+      database: 0
   cache:
     type: redis
     redis:
-      time-to-live: ${RANKING_CACHE_TTL:300000}
+      time-to-live: 300000
       cache-null-values: false
 
 mybatis-plus:
@@ -47,47 +42,22 @@ mybatis-plus:
 springdoc:
   api-docs:
     enabled: true
-    path: /v3/api-docs
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
 
-# Actuator 监控配置
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,prometheus
-  endpoint:
-    health:
-      show-details: always
-      probes:
-        enabled: true
-  info:
-    env:
-      enabled: true
-  metrics:
-    tags:
-      application: ${spring.application.name}
-  prometheus:
-    metrics:
-      export:
-        enabled: true
-
-info:
-  app:
-    name: ${spring.application.name}
-    version: @project.version@
-
 downstream:
-  restaurant-service-base-url: ${RESTAURANT_SERVICE_URL:lb://restaurant-service}
-  interaction-service-base-url: ${INTERACTION_SERVICE_URL:lb://interaction-service}
-  review-service-base-url: ${REVIEW_SERVICE_URL:lb://review-service}
+  restaurant-service-base-url: http://localhost:8102
+  interaction-service-base-url: http://localhost:8104
+  review-service-base-url: http://localhost:8103
 
 ranking:
   hot-restaurants:
-    refresh-ms: 60000
+    refresh-ms: 10000
     like-weight: 2.0
     favorite-weight: 3.0
     review-weight: 5.0
     rating-weight: 10.0
+    min-review-count: 5
+    min-rating: 3.0
+    redis-key: ranking:hot-restaurants

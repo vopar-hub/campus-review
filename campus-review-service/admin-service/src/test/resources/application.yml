@@ -2,14 +2,13 @@ spring:
   cloud:
     nacos:
       config:
-        enabled: false
+        server-addr: 169.254.210.245:8848
+        file-extension: yaml
       discovery:
-        enabled: false
-    compatibility-verifier:
-      enabled: false
+        server-addr: 169.254.210.245:8848
+        service: admin-service
   application:
     name: admin-service
 
-downstream:
-  user-service-base-url: http://localhost:8101
-  review-service-base-url: http://localhost:8103
+
+
