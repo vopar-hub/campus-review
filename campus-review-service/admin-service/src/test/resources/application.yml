@@ -10,5 +10,10 @@ spring:
   application:
     name: admin-service
 
+downstream:
+  user-service-base-url: http://localhost:8103
+  review-service-base-url: http://localhost:8104
+  restaurant-service-base-url: http://localhost:8102
+
 
 
