@@ -14,3 +14,8 @@ spring:
       config:
         server-addr: localhost:8848
         file-extension: yaml
+
+downstream:
+  user-service-base-url: http://localhost:8103
+  review-service-base-url: http://localhost:8104
+  restaurant-service-base-url: http://localhost:8102
