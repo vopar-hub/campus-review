@@ -12,8 +12,9 @@ if [ -z "$FILE_PATH" ]; then
   exit 0
 fi
 
-# 获取项目根目录
-PROJECT_ROOT="$CLAUDE_PROJECT_DIR"
+# 获取项目根目录（优先使用环境变量，否则使用 pwd）
+PROJECT_ROOT="${CLAUDE_PROJECT_DIR:-$(pwd)}"
+PROJECT_ROOT="${PROJECT_ROOT//\\//}"  # 统一路径分隔符
 
 # 切换到项目根目录
 cd "$PROJECT_ROOT" || exit 0
