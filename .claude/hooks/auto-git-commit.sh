@@ -1,18 +1,8 @@
 #!/bin/bash
-# auto-git-commit.sh - 在文件修改后自动提交 git (调试版本)
+# auto-git-commit.sh - 在文件修改后自动提交 git
 
 # 从 stdin 读取 hook 输入
 INPUT=$(cat)
-
-# 保存调试信息到文件
-echo "=== Hook 调试信息 ===" >> "/tmp/git-hook-debug.log"
-echo "时间：$(date)" >> "/tmp/git-hook-debug.log"
-echo "FILE_PATH: $FILE_PATH" >> "/tmp/git-hook-debug.log"
-echo "CLAUDE_PROJECT_DIR: $CLAUDE_PROJECT_DIR" >> "/tmp/git-hook-debug.log"
-echo "PWD: $(pwd)" >> "/tmp/git-hook-debug.log"
-echo "输入 JSON: $INPUT" >> "/tmp/git-hook-debug.log"
-echo "---" >> "/tmp/git-hook-debug.log"
-
 FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 
 # 如果没有文件路径，直接退出
@@ -34,35 +24,18 @@ if [ ! -f "$FILE_PATH" ]; then
   exit 0
 fi
 
-# 统一路径分隔符
-FILE_PATH_UNIX="${FILE_PATH//\\//}"
-PROJECT_ROOT_UNIX="$PROJECT_ROOT"
+# 将 Windows 路径转换为 Unix 格式
+# E:\_CODE_\campus-review -> /e/_CODE_/campus-review
+FILE_PATH_UNIX=$(echo "$FILE_PATH" | sed 's/^\([A-Za-z]\):/\/\L\1/' | sed 's/\\/\//g')
 
-# 获取文件的相对路径
-RELATIVE_PATH="${FILE_PATH_UNIX#$PROJECT_ROOT_UNIX/}"
-# 如果还是绝对路径，尝试其他可能的路径格式
-if [[ "$RELATIVE_PATH" == "$FILE_PATH_UNIX" ]]; then
-  # 尝试小写盘符
-  RELATIVE_PATH="${FILE_PATH_UNIX#/e/_CODE_/campus-review/}"
-fi
-if [[ "$RELATIVE_PATH" == "$FILE_PATH_UNIX" ]]; then
-  # 尝试大写盘符
-  RELATIVE_PATH="${FILE_PATH_UNIX#/E:/_CODE_/campus-review/}"
-fi
-if [[ "$RELATIVE_PATH" == "$FILE_PATH_UNIX" ]]; then
-  # 尝试原始路径
-  RELATIVE_PATH="${FILE_PATH#$PROJECT_ROOT/}"
-fi
-if [[ "$RELATIVE_PATH" == "$FILE_PATH" ]]; then
-  RELATIVE_PATH="${FILE_PATH#$PROJECT_ROOT\\}"
-fi
-# 统一路径分隔符
-RELATIVE_PATH="${RELATIVE_PATH//\\//}"
-# 移除可能的前导斜杠
-RELATIVE_PATH="${RELATIVE_PATH#/}"
+# 获取相对路径
+RELATIVE_PATH="${FILE_PATH_UNIX#$PROJECT_ROOT/}"
 
-# 记录调试信息
-echo "RELATIVE_PATH: $RELATIVE_PATH" >> "/tmp/git-hook-debug.log"
+# 如果还是绝对路径，说明匹配失败
+if [[ "$RELATIVE_PATH" == "$FILE_PATH_UNIX" ]]; then
+  # 无法转换为相对路径，使用原始路径
+  RELATIVE_PATH="$FILE_PATH_UNIX"
+fi
 
 # 根据文件类型生成提交信息前缀
 COMMIT_PREFIX="chore"
