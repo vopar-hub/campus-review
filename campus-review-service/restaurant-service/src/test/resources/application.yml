@@ -1,0 +1,15 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        enabled: false
+      discovery:
+        enabled: false
+    compatibility-verifier:
+      enabled: false
+  application:
+    name: restaurant-service
+
+# Mock downstream services
+downstream:
+  restaurant-service-base-url: http://localhost:8102
