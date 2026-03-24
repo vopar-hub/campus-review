@@ -56,13 +56,13 @@ class UserAdminServiceImplTest {
             mocked.when(UserContextUtil::requireAdmin).thenAnswer(invocation -> null);
 
             // 使用 any() 匹配所有参数，避免 lambda cache 问题
-            when(userMapper.update(any())).thenReturn(1);
+            when(userMapper.update(any(), any())).thenReturn(1);
 
             // When
             assertDoesNotThrow(() -> userAdminService.ban(1L));
 
             // Then
-            verify(userMapper).update(any());
+            verify(userMapper).update(any(), any());
         }
     }
 
