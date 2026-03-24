@@ -151,9 +151,9 @@ class UserAdminServiceImplTest {
             assertNotNull(result);
             assertEquals(2, result.size());
             assertEquals("张三", result.get(0).nickname());
-            assertEquals("USER", result.get(0).roles().iterator().next());
+            assertEquals(Set.of("USER"), result.get(0).roles());
             assertEquals("李四", result.get(1).nickname());
-            assertEquals("ADMIN", result.get(1).roles().iterator().next());
+            assertEquals(Set.of("ADMIN"), result.get(1).roles());
         }
     }
 
