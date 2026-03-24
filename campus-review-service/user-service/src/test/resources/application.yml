@@ -1,0 +1,15 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        enabled: false
+      discovery:
+        enabled: false
+    compatibility-verifier:
+      enabled: false
+  application:
+    name: user-service
+
+# Mock downstream services
+downstream:
+  user-service-base-url: http://localhost:8101
