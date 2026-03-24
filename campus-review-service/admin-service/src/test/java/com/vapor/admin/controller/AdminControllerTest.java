@@ -135,7 +135,7 @@ class AdminControllerTest {
             mockMvc.perform(post("/api/admin/users/1/unban"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.code").value(0))
-                    .andExpect(jsonPath("$.message").value("success"));
+                    .andExpect(jsonPath("$.message").value("OK"));
 
             verify(adminOrchestratorService).unbanUser(1L);
         }
