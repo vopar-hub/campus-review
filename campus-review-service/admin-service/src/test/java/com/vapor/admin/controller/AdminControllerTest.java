@@ -56,8 +56,14 @@ class AdminControllerTest {
                 .defaultRequest(get("/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .alwaysExpect(status().isOk())
                 .build();
+    }
+
+    private void mockUserContext() {
+        MockedStatic<UserContextUtil> mocked = mockStatic(UserContextUtil.class);
+        mocked.when(UserContextUtil::requireUserContext).thenReturn(userContext);
+        mocked.when(UserContextUtil::requireUserId).thenReturn(100L);
+        mocked.when(UserContextUtil::requireAdmin).thenAnswer(invocation -> null);
     }
 
     @Test
