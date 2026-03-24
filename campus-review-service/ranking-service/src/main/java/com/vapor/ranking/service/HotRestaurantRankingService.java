@@ -154,6 +154,7 @@ public class HotRestaurantRankingService {
 
     /**
      * 将排行榜数据更新到 Redis ZSet。
+     * 使用 long 类型存储分数以避免 double 精度问题，同时设置 24 小时过期时间。
      *
      * @param scored 评分后的餐馆列表（已排序）
      */
@@ -162,9 +163,11 @@ public class HotRestaurantRankingService {
         redisTemplate.delete(redisKey);
 
         // 使用 ZSet 存储排行榜，score 作为排序依据
+        // 将 double 分数转换为 long，避免精度问题：score * 10000 保留 4 位小数
         Set<ZSetOperations.TypedTuple<String>> tuples = new java.util.LinkedHashSet<>();
         for (ScoredRestaurant item : scored) {
             String member = String.valueOf(item.restaurant().id());
+            long scoreAsLong = (long) Math.round(item.score() * 10000);
             tuples.add(new ZSetOperations.TypedTuple<String>() {
                 @Override
                 public String getValue() {
@@ -172,18 +175,20 @@ public class HotRestaurantRankingService {
                 }
                 @Override
                 public Double getScore() {
-                    return item.score();
+                    return (double) scoreAsLong;
                 }
                 @Override
                 public int compareTo(ZSetOperations.TypedTuple<String> other) {
-                    return Double.compare(other.getScore(), item.score());
+                    return Long.compare(scoreAsLong, (long) Math.round(other.getScore() != null ? other.getScore() : 0));
                 }
             });
         }
 
         if (!tuples.isEmpty()) {
             redisTemplate.opsForZSet().add(redisKey, tuples);
-            log.info("Redis 排行榜已更新，共 {} 家餐馆", tuples.size());
+            // 设置 24 小时过期时间，防止缓存雪崩
+            redisTemplate.expire(redisKey, 24, java.util.concurrent.TimeUnit.HOURS);
+            log.info("Redis 排行榜已更新，共 {} 家餐馆，过期时间 24 小时", tuples.size());
         }
     }
 
