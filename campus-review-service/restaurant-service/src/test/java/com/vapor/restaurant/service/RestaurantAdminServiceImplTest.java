@@ -161,16 +161,7 @@ class RestaurantAdminServiceImplTest {
                     null
             );
 
-            RestaurantEntity entity = new RestaurantEntity();
-            entity.setId(2L);
-            entity.setName("新餐厅");
-            entity.setCampus("滨湖校区");
-            entity.setAddress(null);
-            entity.setDescription(null);
-            entity.setCoverImageUrl(null);
-            entity.setCreatedAt(Instant.now());
-
-            when(restaurantMapper.insert(entity)).thenReturn(1);
+            when(restaurantMapper.insert(any(RestaurantEntity.class))).thenReturn(1);
 
             // When
             RestaurantDTO result = restaurantAdminService.create(request);
