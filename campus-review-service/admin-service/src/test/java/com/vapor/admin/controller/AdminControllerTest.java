@@ -56,6 +56,7 @@ class AdminControllerTest {
                 .defaultRequest(get("/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .alwaysExpect(status().isOk())
                 .build();
     }
 
