@@ -90,13 +90,13 @@ class UserAdminServiceImplTest {
             mocked.when(UserContextUtil::requireUserId).thenReturn(100L);
             mocked.when(UserContextUtil::requireAdmin).thenAnswer(invocation -> null);
 
-            when(userMapper.update(any())).thenReturn(1);
+            when(userMapper.update(any(), any())).thenReturn(1);
 
             // When
             assertDoesNotThrow(() -> userAdminService.unban(1L));
 
             // Then
-            verify(userMapper).update(any());
+            verify(userMapper).update(any(), any());
         }
     }
 
