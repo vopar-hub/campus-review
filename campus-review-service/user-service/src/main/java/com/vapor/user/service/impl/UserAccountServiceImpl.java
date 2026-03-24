@@ -7,6 +7,8 @@ import com.vapor.common.web.UserContext;
 import com.vapor.common.web.UserContextHolder;
 import com.vapor.model.auth.LoginRequest;
 import com.vapor.model.auth.LoginResponse;
+import com.vapor.model.auth.RefreshTokenRequest;
+import com.vapor.model.auth.RefreshTokenResponse;
 import com.vapor.model.auth.RegisterRequest;
 import com.vapor.model.user.UserDTO;
 import com.vapor.user.entity.UserEntity;
@@ -21,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Set;
 
