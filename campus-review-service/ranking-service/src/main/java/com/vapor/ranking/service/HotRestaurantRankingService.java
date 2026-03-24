@@ -195,6 +195,7 @@ public class HotRestaurantRankingService {
     /**
      * 查询热门餐馆榜 Top N。
      * 直接从 Redis ZSet 中获取数据，同时从数据库获取平均评分。
+     * 使用空值缓存防止缓存穿透。
      *
      * @param topN 返回 Top N，最小为 1
      * @return 排行榜条目
@@ -206,8 +207,12 @@ public class HotRestaurantRankingService {
         Set<ZSetOperations.TypedTuple<String>> tuples = redisTemplate.opsForZSet()
                 .reverseRangeWithScores(redisKey, 0, Math.max(1, topN) - 1);
 
+        // 缓存穿透防护：如果 Redis 中无数据，返回空列表并记录空值缓存
         if (tuples == null || tuples.isEmpty()) {
-            log.debug("Redis 中暂无排行榜数据");
+            log.debug("Redis 中暂无排行榜数据，设置空值缓存 5 分钟");
+            // 设置空值缓存 5 分钟，防止恶意查询穿透到数据库
+            String emptyCacheKey = redisKey + ":empty";
+            redisTemplate.opsForValue().set(emptyCacheKey, "1", 5, java.util.concurrent.TimeUnit.MINUTES);
             return List.of();
         }
 
