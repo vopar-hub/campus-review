@@ -131,7 +131,7 @@ class RestaurantAdminServiceImplTest {
             entity.setCoverImageUrl("https://example.com/restaurant/1/cover.jpg");
             entity.setCreatedAt(Instant.now());
 
-            when(restaurantMapper.insert(entity)).thenReturn(1);
+            when(restaurantMapper.insert(any(RestaurantEntity.class))).thenReturn(1);
 
             // When
             RestaurantDTO result = restaurantAdminService.create(request);
