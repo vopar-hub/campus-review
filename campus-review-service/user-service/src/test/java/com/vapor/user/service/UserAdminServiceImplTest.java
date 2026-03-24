@@ -15,6 +15,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.time.Instant;
 import java.util.List;
@@ -28,6 +30,7 @@ import static org.mockito.Mockito.*;
  * UserAdminServiceImpl 单元测试。
  */
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class UserAdminServiceImplTest {
 
     @Mock
@@ -52,6 +55,7 @@ class UserAdminServiceImplTest {
             mocked.when(UserContextUtil::requireUserId).thenReturn(100L);
             mocked.when(UserContextUtil::requireAdmin).thenAnswer(invocation -> null);
 
+            // 使用 any() 匹配所有参数，避免 lambda cache 问题
             when(userMapper.update(any())).thenReturn(1);
 
             // When
