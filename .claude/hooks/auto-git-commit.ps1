@@ -10,6 +10,11 @@ if (-not $InputData) {
     $InputData = [Console]::In.ReadToEnd()
 }
 
+# 处理空输入或空白输入
+if ([string]::IsNullOrWhiteSpace($InputData)) {
+    exit 0
+}
+
 try {
     $JsonInput = $InputData | ConvertFrom-Json -ErrorAction SilentlyContinue
 } catch {
@@ -20,7 +25,17 @@ if (-not $JsonInput) {
     exit 0
 }
 
-$FilePath = $JsonInput.tool_input.file_path
+# 尝试多种可能的路径格式（使用 PowerShell 兼容的空值检查）
+$FilePath = $null
+if ($JsonInput.tool_input -and $JsonInput.tool_input.filepath) {
+    $FilePath = $JsonInput.tool_input.filepath
+} elseif ($JsonInput.tool_input -and $JsonInput.tool_input.file_path) {
+    $FilePath = $JsonInput.tool_input.file_path
+} elseif ($JsonInput.file_path) {
+    $FilePath = $JsonInput.file_path
+} elseif ($JsonInput.filepath) {
+    $FilePath = $JsonInput.filepath
+}
 
 # 如果没有文件路径，直接退出
 if (-not $FilePath) {

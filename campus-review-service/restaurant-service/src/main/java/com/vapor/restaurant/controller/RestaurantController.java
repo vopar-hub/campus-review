@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 餐馆接口（用户侧）。
@@ -90,6 +92,23 @@ public class RestaurantController {
     @Operation(summary = "查询餐馆", description = "根据 ID 查询餐馆详细信息")
     public ApiResponse<RestaurantDTO> getById(@PathVariable Long id) {
         return ApiResponse.ok(restaurantAppService.getById(id));
+    }
+
+    /**
+     * 根据 ID 列表批量查询餐馆。
+     *
+     * @param ids 餐馆 ID 列表，逗号分隔
+     * @return 餐馆列表
+     */
+    @GetMapping("/by-ids")
+    @Operation(summary = "批量查询餐馆", description = "根据 ID 列表批量查询餐馆信息")
+    public ApiResponse<List<RestaurantDTO>> getByIds(@RequestParam String ids) {
+        List<Long> idList = Arrays.stream(ids.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .map(Long::parseLong)
+                .collect(Collectors.toList());
+        return ApiResponse.ok(restaurantAppService.getByIds(idList));
     }
 
     /**

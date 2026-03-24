@@ -20,6 +20,7 @@ public class HotRestaurantRankEntity {
     private Long id;
     private Long restaurantId;
     private Double score;
+    private Double avgRating;
     @TableField("`rank`")
     private Long rank;
     private Instant updatedAt;

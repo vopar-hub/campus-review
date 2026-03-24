@@ -140,6 +140,7 @@ public class HotRestaurantRankingService {
             HotRestaurantRankEntity entity = new HotRestaurantRankEntity();
             entity.setRestaurantId(item.restaurant().id());
             entity.setScore(item.score());
+            entity.setAvgRating(item.avgRating());
             entity.setRank(rank++);
             entity.setUpdatedAt(now);
             hotRestaurantRankMapper.insert(entity);
@@ -188,7 +189,7 @@ public class HotRestaurantRankingService {
 
     /**
      * 查询热门餐馆榜 Top N。
-     * 直接从 Redis ZSet 中获取数据。
+     * 直接从 Redis ZSet 中获取数据，同时从数据库获取平均评分。
      *
      * @param topN 返回 Top N，最小为 1
      * @return 排行榜条目
@@ -215,6 +216,9 @@ public class HotRestaurantRankingService {
         // 批量获取餐馆信息
         List<RestaurantDTO> restaurants = fetchRestaurantsByIds(restaurantIds);
 
+        // 从数据库获取平均评分信息
+        List<HotRestaurantRankEntity> rankEntities = hotRestaurantRankMapper.selectByRestaurantIds(restaurantIds);
+
         List<HotRestaurantRankItemDTO> result = new java.util.ArrayList<>();
         long rank = 1;
         for (ZSetOperations.TypedTuple<String> tuple : tuples) {
@@ -224,11 +228,18 @@ public class HotRestaurantRankingService {
                     .map(RestaurantDTO::name)
                     .findFirst()
                     .orElse("Unknown");
+            // 获取平均评分
+            double avgRating = rankEntities.stream()
+                    .filter(e -> Objects.equals(e.getRestaurantId(), restaurantId))
+                    .mapToDouble(HotRestaurantRankEntity::getAvgRating)
+                    .findFirst()
+                    .orElse(0.0);
             result.add(new HotRestaurantRankItemDTO(
                     rank++,
                     restaurantId,
                     restaurantName,
-                    tuple.getScore() != null ? tuple.getScore() : 0.0
+                    tuple.getScore() != null ? tuple.getScore() : 0.0,
+                    avgRating
             ));
         }
         return result;
@@ -318,7 +329,7 @@ public class HotRestaurantRankingService {
         log.debug("计算餐馆热度：restaurantId={}, likeCount={}, favoriteCount={}, reviewCount={}, avgRating={}, score={}",
                 restaurant.id(), counts.likeCount(), counts.favoriteCount(), reviews.size(), avgRating, score);
 
-        return new ScoredRestaurant(restaurant, score);
+        return new ScoredRestaurant(restaurant, score, avgRating);
     }
 
     /**
@@ -366,7 +377,8 @@ public class HotRestaurantRankingService {
      *
      * @param restaurant 餐馆信息
      * @param score 热度分
+     * @param avgRating 平均评分
      */
-    private record ScoredRestaurant(RestaurantDTO restaurant, double score) {
+    private record ScoredRestaurant(RestaurantDTO restaurant, double score, double avgRating) {
     }
 }

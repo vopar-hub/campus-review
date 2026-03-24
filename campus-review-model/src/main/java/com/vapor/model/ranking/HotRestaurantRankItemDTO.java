@@ -7,11 +7,13 @@ package com.vapor.model.ranking;
  * @param restaurantId 餐馆 ID
  * @param restaurantName 餐馆名称
  * @param score 热度分值
+ * @param avgRating 平均评分（1~5）
  */
 public record HotRestaurantRankItemDTO(
         long rank,
         Long restaurantId,
         String restaurantName,
-        double score
+        double score,
+        double avgRating
 ) {
 }

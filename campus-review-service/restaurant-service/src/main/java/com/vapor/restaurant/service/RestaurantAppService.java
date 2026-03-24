@@ -39,6 +39,14 @@ public interface RestaurantAppService {
     RestaurantDTO getById(Long id);
 
     /**
+     * 根据 ID 列表批量查询餐馆。
+     *
+     * @param ids 餐馆 ID 列表
+     * @return 餐馆列表
+     */
+    List<RestaurantDTO> getByIds(List<Long> ids);
+
+    /**
      * 餐馆检索。
      *
      * @param name 餐馆名称（模糊匹配，可选）
