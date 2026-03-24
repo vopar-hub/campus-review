@@ -8,6 +8,8 @@ import com.vapor.common.web.GlobalExceptionHandler;
 import com.vapor.model.restaurant.RestaurantCreateRequest;
 import com.vapor.model.restaurant.RestaurantDTO;
 import com.vapor.model.user.UserDTO;
+import com.vapor.common.web.UserContext;
+import com.vapor.common.util.UserContextUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
