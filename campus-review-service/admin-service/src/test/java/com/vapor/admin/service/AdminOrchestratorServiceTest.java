@@ -296,8 +296,8 @@ class AdminOrchestratorServiceTest {
             when(userContext.getUserId()).thenReturn(100L);
             when(userContext.getRoles()).thenReturn(Set.of("ADMIN"));
 
-            when(restClient.delete()).thenReturn(requestBodyUriSpec);
-            when(requestBodyUriSpec.uri(any(String.class))).thenReturn(requestBodySpec);
+            when(restClient.delete()).thenReturn(requestBodyHeadersUriSpec);
+            when(requestBodyHeadersUriSpec.uri(any(String.class))).thenReturn(requestBodySpec);
             when(requestBodySpec.header(anyString(), anyString())).thenReturn(requestBodySpec);
             when(requestBodySpec.retrieve()).thenReturn(responseSpec);
             when(responseSpec.toBodilessEntity()).thenReturn(null);
