@@ -4,6 +4,7 @@ import com.vapor.common.api.ApiResponse;
 import com.vapor.common.error.BizException;
 import com.vapor.common.util.UserContextUtil;
 import com.vapor.common.web.UserContext;
+import com.vapor.model.restaurant.RestaurantCreateRequest;
 import com.vapor.model.restaurant.RestaurantDTO;
 import com.vapor.model.user.UserDTO;
 import org.slf4j.Logger;
@@ -26,6 +27,8 @@ public class AdminOrchestratorService {
     private static final ParameterizedTypeReference<ApiResponse<List<UserDTO>>> USER_LIST_TYPE =
             new ParameterizedTypeReference<>() {};
     private static final ParameterizedTypeReference<ApiResponse<List<RestaurantDTO>>> RESTAURANT_LIST_TYPE =
+            new ParameterizedTypeReference<>() {};
+    private static final ParameterizedTypeReference<ApiResponse<RestaurantDTO>> RESTAURANT_CREATE_TYPE =
             new ParameterizedTypeReference<>() {};
 
     private final RestClient restClient;
@@ -121,6 +124,27 @@ public class AdminOrchestratorService {
                 .retrieve()
                 .body(RESTAURANT_LIST_TYPE);
         return resp == null || resp.getData() == null ? List.of() : resp.getData();
+    }
+
+    /**
+     * 创建餐厅。
+     *
+     * @param request 创建请求
+     * @return 创建的餐厅 DTO
+     * @throws BizException 非管理员时抛出
+     */
+    public RestaurantDTO createRestaurant(RestaurantCreateRequest request) {
+        UserContext ctx = UserContextUtil.requireUserContext();
+        log.info("创建餐厅：name={}, adminId={}", request.name(), ctx.getUserId());
+
+        ApiResponse<RestaurantDTO> resp = restClient.post()
+                .uri(restaurantServiceBaseUrl + "/api/admin/restaurants")
+                .header("X-User-Id", String.valueOf(ctx.getUserId()))
+                .header("X-User-Roles", String.join(",", ctx.getRoles()))
+                .body(request)
+                .retrieve()
+                .body(RESTAURANT_CREATE_TYPE);
+        return resp != null ? resp.getData() : null;
     }
 
     /**
