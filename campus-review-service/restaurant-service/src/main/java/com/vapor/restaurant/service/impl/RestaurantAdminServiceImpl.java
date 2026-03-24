@@ -47,6 +47,26 @@ public class RestaurantAdminServiceImpl implements RestaurantAdminService {
 
     @Override
     @Transactional
+    public RestaurantDTO create(RestaurantCreateRequest request) {
+        UserContextUtil.requireAdmin();
+        Long adminId = UserContextUtil.requireUserId();
+        log.info("创建餐厅：name={}, campus={}, adminId={}", request.name(), adminId);
+
+        RestaurantEntity entity = new RestaurantEntity();
+        entity.setName(request.name());
+        entity.setCampus(request.campus());
+        entity.setAddress(request.address());
+        entity.setDescription(request.description());
+        entity.setCoverImageUrl(request.coverImageUrl());
+        entity.setCreatedAt(Instant.now());
+        entity.setUpdatedAt(Instant.now());
+
+        restaurantMapper.insert(entity);
+        return toDTO(entity);
+    }
+
+    @Override
+    @Transactional
     public void delete(Long restaurantId) {
         UserContextUtil.requireAdmin();
         Long adminId = UserContextUtil.requireUserId();
