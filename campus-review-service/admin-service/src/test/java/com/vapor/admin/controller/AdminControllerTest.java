@@ -55,8 +55,11 @@ class AdminControllerTest {
     @BeforeEach
     void setUp() {
         adminController = new AdminController(adminOrchestratorService);
+        LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
+        validator.afterPropertiesSet();
         mockMvc = MockMvcBuilders.standaloneSetup(adminController)
                 .setControllerAdvice(new GlobalExceptionHandler())
+                .setValidator(validator)
                 .defaultRequest(get("/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
