@@ -2,6 +2,8 @@ package com.vapor.user.service;
 
 import com.vapor.model.auth.LoginRequest;
 import com.vapor.model.auth.LoginResponse;
+import com.vapor.model.auth.RefreshTokenRequest;
+import com.vapor.model.auth.RefreshTokenResponse;
 import com.vapor.model.auth.RegisterRequest;
 import com.vapor.model.user.UserDTO;
 
@@ -27,6 +29,14 @@ public interface UserAccountService {
      * @return 登录响应（含 token 与过期时间）
      */
     LoginResponse login(LoginRequest request);
+
+    /**
+     * 刷新 Access Token。
+     *
+     * @param request 刷新 Token 请求
+     * @return 新的 Access Token 与过期时间
+     */
+    RefreshTokenResponse refreshToken(RefreshTokenRequest request);
 
     /**
      * 获取当前登录用户信息。
