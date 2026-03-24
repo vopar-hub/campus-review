@@ -37,18 +37,22 @@ public class UserAccountServiceImpl implements UserAccountService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final JwtService refreshJwtService;
 
     /**
      * 构造应用服务。
      *
      * @param userMapper 用户数据访问组件
      * @param passwordEncoder 密码编码器
-     * @param jwtService JWT 服务
+     * @param jwtService JWT 服务（Access Token）
+     * @param refreshJwtService Refresh JWT 服务（Refresh Token）
      */
-    public UserAccountServiceImpl(UserMapper userMapper, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public UserAccountServiceImpl(UserMapper userMapper, PasswordEncoder passwordEncoder,
+                                   JwtService jwtService, JwtService refreshJwtService) {
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.refreshJwtService = refreshJwtService;
     }
 
     @Override
