@@ -3,6 +3,8 @@ package com.vapor.user.controller;
 import com.vapor.common.api.ApiResponse;
 import com.vapor.model.auth.LoginRequest;
 import com.vapor.model.auth.LoginResponse;
+import com.vapor.model.auth.RefreshTokenRequest;
+import com.vapor.model.auth.RefreshTokenResponse;
 import com.vapor.model.auth.RegisterRequest;
 import com.vapor.model.user.UserDTO;
 import com.vapor.user.service.UserAccountService;
@@ -17,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 用户认证接口。
  *
- * 提供注册与登录等不需要登录态的入口。
+ * 提供注册、登录与 Token 刷新等认证接口。
  */
 @RestController
 @RequestMapping("/api/auth")
@@ -50,11 +52,23 @@ public class AuthController {
      * 登录并签发 JWT。
      *
      * @param request 登录请求（账号可为邮箱或学号）
-     * @return 登录结果（包含 token 与过期时间）
+     * @return 登录结果（包含 token、refreshToken 与过期时间）
      */
     @PostMapping("/login")
-    @Operation(summary = "用户登录", description = "用户登录并签发 JWT token")
+    @Operation(summary = "用户登录", description = "用户登录并签发 JWT token 和 Refresh Token")
     public ApiResponse<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         return ApiResponse.ok(userAccountService.login(request));
+    }
+
+    /**
+     * 刷新 Access Token。
+     *
+     * @param request 刷新 Token 请求
+     * @return 新的 Access Token 与过期时间
+     */
+    @PostMapping("/refresh")
+    @Operation(summary = "刷新 Token", description = "使用 Refresh Token 刷新 Access Token")
+    public ApiResponse<RefreshTokenResponse> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
+        return ApiResponse.ok(userAccountService.refreshToken(request));
     }
 }
