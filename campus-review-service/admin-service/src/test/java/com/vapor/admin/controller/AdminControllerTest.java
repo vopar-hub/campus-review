@@ -3,8 +3,8 @@ package com.vapor.admin.controller;
 import com.vapor.admin.service.AdminOrchestratorService;
 import com.vapor.common.api.ApiResponse;
 import com.vapor.common.error.BizException;
-import com.vapor.common.util.UserContextUtil;
-import com.vapor.common.web.UserContext;
+import com.vapor.common.error.ErrorCode;
+import com.vapor.common.web.GlobalExceptionHandler;
 import com.vapor.model.restaurant.RestaurantCreateRequest;
 import com.vapor.model.restaurant.RestaurantDTO;
 import com.vapor.model.user.UserDTO;
@@ -50,6 +50,7 @@ class AdminControllerTest {
     void setUp() {
         adminController = new AdminController(adminOrchestratorService);
         mockMvc = MockMvcBuilders.standaloneSetup(adminController)
+                .setControllerAdvice(new GlobalExceptionHandler())
                 .defaultRequest(get("/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
