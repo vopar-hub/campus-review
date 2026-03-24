@@ -210,7 +210,7 @@ class AdminControllerTest {
                             .content("{\"name\":\"第一食堂\",\"campus\":\"南湖校区\",\"address\":\"校园北区 1 号楼\",\"description\":\"提供各式家常菜，物美价廉\",\"coverImageUrl\":\"https://example.com/1.jpg\"}"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.code").value(0))
-                    .andExpect(jsonPath("$.message").value("success"))
+                    .andExpect(jsonPath("$.message").value("OK"))
                     .andExpect(jsonPath("$.data.name").value("第一食堂"))
                     .andExpect(jsonPath("$.data.campus").value("南湖校区"));
 
@@ -221,33 +221,21 @@ class AdminControllerTest {
     @Test
     @DisplayName("创建餐厅 - 请求参数校验失败（名称为空）")
     void createRestaurant_validationError_emptyName() throws Exception {
-        try (MockedStatic<UserContextUtil> mocked = mockStatic(UserContextUtil.class)) {
-            mocked.when(UserContextUtil::requireUserContext).thenReturn(userContext);
-            when(userContext.getUserId()).thenReturn(100L);
-            when(userContext.getRoles()).thenReturn(Set.of("ADMIN"));
-
-            // When & Then
-            mockMvc.perform(post("/api/admin/restaurants")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content("{\"campus\":\"南湖校区\"}"))
-                    .andExpect(status().isBadRequest());
-        }
+        // When & Then
+        mockMvc.perform(post("/api/admin/restaurants")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"campus\":\"南湖校区\"}"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     @DisplayName("创建餐厅 - 请求参数校验失败（校区为空）")
     void createRestaurant_validationError_emptyCampus() throws Exception {
-        try (MockedStatic<UserContextUtil> mocked = mockStatic(UserContextUtil.class)) {
-            mocked.when(UserContextUtil::requireUserContext).thenReturn(userContext);
-            when(userContext.getUserId()).thenReturn(100L);
-            when(userContext.getRoles()).thenReturn(Set.of("ADMIN"));
-
-            // When & Then
-            mockMvc.perform(post("/api/admin/restaurants")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content("{\"name\":\"第一食堂\"}"))
-                    .andExpect(status().isBadRequest());
-        }
+        // When & Then
+        mockMvc.perform(post("/api/admin/restaurants")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"第一食堂\"}"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -264,7 +252,7 @@ class AdminControllerTest {
             mockMvc.perform(delete("/api/admin/restaurants/1"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.code").value(0))
-                    .andExpect(jsonPath("$.message").value("success"));
+                    .andExpect(jsonPath("$.message").value("OK"));
 
             verify(adminOrchestratorService).deleteRestaurant(1L);
         }
