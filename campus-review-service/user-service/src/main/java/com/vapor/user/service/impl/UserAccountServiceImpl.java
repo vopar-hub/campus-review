@@ -119,10 +119,45 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         Set<String> roles = JwtClaims.parseRoles(user.getRoles());
         String token = jwtService.issue(user.getId(), roles);
+        String refreshToken = refreshJwtService.issue(user.getId(), roles);
         JwtClaims claims = jwtService.parseAndValidate(token);
+        JwtClaims refreshClaims = refreshJwtService.parseAndValidate(refreshToken);
 
         log.info("登录成功：userId={}, account={}", user.getId(), request.account());
-        return new LoginResponse(user.getId(), roles, token, claims.expiresAt());
+        return new LoginResponse(user.getId(), roles, token, refreshToken, claims.expiresAt(), refreshClaims.expiresAt());
+    }
+
+    @Override
+    public RefreshTokenResponse refreshToken(RefreshTokenRequest request) {
+        String refreshToken = request.refreshToken();
+        if (refreshToken == null || refreshToken.isBlank()) {
+            throw new BizException(ErrorCode.BAD_REQUEST, "Refresh Token 不能为空");
+        }
+
+        JwtClaims claims;
+        try {
+            claims = refreshJwtService.parseAndValidate(refreshToken);
+        } catch (Exception e) {
+            log.warn("Refresh Token 无效：error={}", e.getMessage());
+            throw new BizException(ErrorCode.UNAUTHORIZED, "Refresh Token 无效或已过期");
+        }
+
+        // 验证用户是否存在且未被封禁
+        UserEntity user = userMapper.selectById(claims.userId());
+        if (user == null) {
+            throw new BizException(ErrorCode.NOT_FOUND, "用户不存在");
+        }
+        if (Boolean.TRUE.equals(user.getBanned())) {
+            throw new BizException(ErrorCode.FORBIDDEN, "账号已被封禁");
+        }
+
+        // 签发新的 Access Token
+        Set<String> roles = JwtClaims.parseRoles(user.getRoles());
+        String newToken = jwtService.issue(user.getId(), roles);
+        JwtClaims newClaims = jwtService.parseAndValidate(newToken);
+
+        log.info("Token 刷新成功：userId={}", user.getId());
+        return new RefreshTokenResponse(newToken, newClaims.expiresAt());
     }
 
     @Override
