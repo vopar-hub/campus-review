@@ -53,6 +53,9 @@ class AdminOrchestratorServiceTest {
     private RestClient.RequestBodyUriSpec requestBodyUriSpec;
 
     @Mock
+    private RestClient.RequestHeadersUriSpec requestBodyHeadersUriSpec;
+
+    @Mock
     private UserContext userContext;
 
     private AdminOrchestratorService adminService;
