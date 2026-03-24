@@ -21,14 +21,26 @@ import java.util.List;
 public class UserGatewayConfig {
 
     /**
-     * JWT 服务组件。
+     * JWT 服务组件（Access Token）。
      *
      * @param secret JWT 密钥
      * @return JWT 服务
      */
     @Bean
     public JwtService jwtService(@Value("${security.jwt.secret}") String secret) {
-        return new JwtService(secret, Duration.ofSeconds(86400));
+        return new JwtService(secret, Duration.ofHours(4));
+    }
+
+    /**
+     * Refresh Token JWT 服务组件。
+     * Refresh Token 有效期 7 天，用于无感刷新 Access Token。
+     *
+     * @param secret JWT 密钥
+     * @return Refresh Token JWT 服务
+     */
+    @Bean
+    public JwtService refreshJwtService(@Value("${security.jwt.secret}") String secret) {
+        return new JwtService(secret, Duration.ofDays(7));
     }
 
     /**
