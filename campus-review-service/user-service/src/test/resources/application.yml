@@ -18,3 +18,7 @@ spring:
 # Mock downstream services
 downstream:
   user-service-base-url: http://localhost:8101
+
+mybatis-plus:
+  configuration:
+    use-generated-keys: false
