@@ -1,6 +1,6 @@
 package com.vapor.user.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.vapor.common.error.BizException;
 import com.vapor.common.error.ErrorCode;
 import com.vapor.common.util.UserContextUtil;
@@ -42,10 +42,12 @@ public class UserAdminServiceImpl implements UserAdminService {
         Long adminId = UserContextUtil.requireUserId();
         log.info("封禁用户：userId={}, adminId={}", userId, adminId);
 
-        int updated = userMapper.update(new LambdaUpdateWrapper<UserEntity>()
-                .eq(UserEntity::getId, userId)
-                .set(UserEntity::getBanned, true)
-                .set(UserEntity::getUpdatedAt, Instant.now()));
+        UpdateWrapper<UserEntity> wrapper = new UpdateWrapper<>();
+        wrapper.eq("id", userId)
+                .set("banned", true)
+                .set("updated_at", Instant.now());
+
+        int updated = userMapper.update(null, wrapper);
         if (updated == 0) {
             throw new BizException(ErrorCode.NOT_FOUND, "用户不存在");
         }
@@ -58,10 +60,12 @@ public class UserAdminServiceImpl implements UserAdminService {
         Long adminId = UserContextUtil.requireUserId();
         log.info("解封用户：userId={}, adminId={}", userId, adminId);
 
-        int updated = userMapper.update(new LambdaUpdateWrapper<UserEntity>()
-                .eq(UserEntity::getId, userId)
-                .set(UserEntity::getBanned, false)
-                .set(UserEntity::getUpdatedAt, Instant.now()));
+        UpdateWrapper<UserEntity> wrapper = new UpdateWrapper<>();
+        wrapper.eq("id", userId)
+                .set("banned", false)
+                .set("updated_at", Instant.now());
+
+        int updated = userMapper.update(null, wrapper);
         if (updated == 0) {
             throw new BizException(ErrorCode.NOT_FOUND, "用户不存在");
         }
