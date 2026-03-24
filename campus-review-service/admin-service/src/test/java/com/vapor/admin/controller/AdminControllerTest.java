@@ -74,7 +74,7 @@ class AdminControllerTest {
             mockMvc.perform(get("/api/admin/users"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.code").value(0))
-                    .andExpect(jsonPath("$.message").value("success"))
+                    .andExpect(jsonPath("$.message").value("OK"))
                     .andExpect(jsonPath("$.data").isArray())
                     .andExpect(jsonPath("$.data.length()").value(2))
                     .andExpect(jsonPath("$.data[0].nickname").value("张三"))
