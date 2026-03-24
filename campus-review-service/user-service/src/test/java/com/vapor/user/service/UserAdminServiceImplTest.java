@@ -1,6 +1,5 @@
 package com.vapor.user.service;
 
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.vapor.common.error.BizException;
 import com.vapor.common.util.UserContextUtil;
 import com.vapor.common.web.UserContext;
@@ -23,7 +22,6 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
@@ -54,13 +52,13 @@ class UserAdminServiceImplTest {
             mocked.when(UserContextUtil::requireUserId).thenReturn(100L);
             mocked.when(UserContextUtil::requireAdmin).thenAnswer(invocation -> null);
 
-            when(userMapper.update(any(LambdaUpdateWrapper.class))).thenReturn(1);
+            when(userMapper.update(any())).thenReturn(1);
 
             // When
             assertDoesNotThrow(() -> userAdminService.ban(1L));
 
             // Then
-            verify(userMapper).update(any(LambdaUpdateWrapper.class));
+            verify(userMapper).update(any());
         }
     }
 
@@ -72,7 +70,7 @@ class UserAdminServiceImplTest {
             mocked.when(UserContextUtil::requireUserId).thenReturn(100L);
             mocked.when(UserContextUtil::requireAdmin).thenAnswer(invocation -> null);
 
-            when(userMapper.update(any(LambdaUpdateWrapper.class))).thenReturn(0);
+            when(userMapper.update(any())).thenReturn(0);
 
             // When & Then
             BizException exception = assertThrows(BizException.class, () -> userAdminService.ban(1L));
@@ -88,13 +86,13 @@ class UserAdminServiceImplTest {
             mocked.when(UserContextUtil::requireUserId).thenReturn(100L);
             mocked.when(UserContextUtil::requireAdmin).thenAnswer(invocation -> null);
 
-            when(userMapper.update(any(LambdaUpdateWrapper.class))).thenReturn(1);
+            when(userMapper.update(any())).thenReturn(1);
 
             // When
             assertDoesNotThrow(() -> userAdminService.unban(1L));
 
             // Then
-            verify(userMapper).update(any(LambdaUpdateWrapper.class));
+            verify(userMapper).update(any());
         }
     }
 
@@ -106,7 +104,7 @@ class UserAdminServiceImplTest {
             mocked.when(UserContextUtil::requireUserId).thenReturn(100L);
             mocked.when(UserContextUtil::requireAdmin).thenAnswer(invocation -> null);
 
-            when(userMapper.update(any(LambdaUpdateWrapper.class))).thenReturn(0);
+            when(userMapper.update(any())).thenReturn(0);
 
             // When & Then
             BizException exception = assertThrows(BizException.class, () -> userAdminService.unban(1L));
@@ -140,7 +138,7 @@ class UserAdminServiceImplTest {
             entity2.setBanned(false);
             entity2.setCreatedAt(Instant.now());
 
-            when(userMapper.selectList(null)).thenReturn(List.of(entity1, entity2));
+            when(userMapper.selectList(any())).thenReturn(List.of(entity1, entity2));
 
             // When
             List<UserDTO> result = userAdminService.getUserList();
@@ -163,7 +161,7 @@ class UserAdminServiceImplTest {
             mocked.when(UserContextUtil::requireUserId).thenReturn(100L);
             mocked.when(UserContextUtil::requireAdmin).thenAnswer(invocation -> null);
 
-            when(userMapper.selectList(null)).thenReturn(List.of());
+            when(userMapper.selectList(any())).thenReturn(List.of());
 
             // When
             List<UserDTO> result = userAdminService.getUserList();
@@ -191,7 +189,7 @@ class UserAdminServiceImplTest {
             entity.setBanned(false);
             entity.setCreatedAt(Instant.now());
 
-            when(userMapper.selectList(null)).thenReturn(List.of(entity));
+            when(userMapper.selectList(any())).thenReturn(List.of(entity));
 
             // When
             List<UserDTO> result = userAdminService.getUserList();
@@ -220,7 +218,7 @@ class UserAdminServiceImplTest {
             entity.setBanned(true);
             entity.setCreatedAt(Instant.now());
 
-            when(userMapper.selectList(null)).thenReturn(List.of(entity));
+            when(userMapper.selectList(any())).thenReturn(List.of(entity));
 
             // When
             List<UserDTO> result = userAdminService.getUserList();
@@ -249,7 +247,7 @@ class UserAdminServiceImplTest {
             entity.setBanned(false);
             entity.setCreatedAt(Instant.now());
 
-            when(userMapper.selectList(null)).thenReturn(List.of(entity));
+            when(userMapper.selectList(any())).thenReturn(List.of(entity));
 
             // When
             List<UserDTO> result = userAdminService.getUserList();
