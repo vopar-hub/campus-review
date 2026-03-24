@@ -74,7 +74,7 @@ class UserAdminServiceImplTest {
             mocked.when(UserContextUtil::requireUserId).thenReturn(100L);
             mocked.when(UserContextUtil::requireAdmin).thenAnswer(invocation -> null);
 
-            when(userMapper.update(any())).thenReturn(0);
+            when(userMapper.update(any(), any())).thenReturn(0);
 
             // When & Then
             BizException exception = assertThrows(BizException.class, () -> userAdminService.ban(1L));
