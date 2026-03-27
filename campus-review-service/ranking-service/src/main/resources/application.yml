@@ -61,3 +61,22 @@ ranking:
     min-review-count: 5
     min-rating: 3.0
     redis-key: ranking:hot-restaurants
+
+# Feign 配置
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000    # 连接超时 5 秒
+        readTimeout: 10000      # 读取超时 10 秒
+      # 针对特定服务的配置
+      restaurant-service:
+        readTimeout: 15000      # 餐馆服务读取超时 15 秒
+      review-service:
+        readTimeout: 15000      # 评价服务读取超时 15 秒
+
+# Feign 日志级别
+logging:
+  level:
+    com.vapor.ranking.client: DEBUG
+    feign: DEBUG
