@@ -19,12 +19,12 @@ public class RestaurantServiceClientFallback implements RestaurantServiceClient 
     @Override
     public ApiResponse<List<RestaurantDTO>> getRestaurants() {
         log.error("获取餐馆列表失败，返回降级数据");
-        return ApiResponse.error("服务暂时不可用，请稍后重试");
+        return ApiResponse.ok(List.of());
     }
 
     @Override
     public ApiResponse<List<RestaurantDTO>> getRestaurantsByIds(List<Long> ids) {
         log.error("批量获取餐馆失败，ids={}", ids);
-        return ApiResponse.error("服务暂时不可用，请稍后重试");
+        return ApiResponse.ok(List.of());
     }
 }
