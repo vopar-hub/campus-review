@@ -4,7 +4,6 @@ import com.vapor.common.web.RequestIdFilter;
 import com.vapor.common.web.UserContextFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestClient;
 
 /**
  * 后台服务配置。
