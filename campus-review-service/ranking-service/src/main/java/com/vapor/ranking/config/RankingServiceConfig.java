@@ -45,6 +45,16 @@ public class RankingServiceConfig {
     }
 
     /**
+     * Feign 错误解码器 - 统一处理服务间调用的错误响应。
+     *
+     * @return 错误解码器
+     */
+    @Bean
+    public ErrorDecoder errorDecoder() {
+        return new FeignErrorDecoder();
+    }
+
+    /**
      * Redis 缓存管理器。
      *
      * @param factory Redis 连接工厂
