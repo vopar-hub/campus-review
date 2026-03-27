@@ -19,3 +19,22 @@ downstream:
   user-service-base-url: http://localhost:8101
   review-service-base-url: http://localhost:8103
   restaurant-service-base-url: http://localhost:8102
+
+# Feign 配置
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000    # 连接超时 5 秒
+        readTimeout: 10000      # 读取超时 10 秒
+      # 针对特定服务的配置
+      user-service:
+        readTimeout: 15000      # 用户服务读取超时 15 秒
+      restaurant-service:
+        readTimeout: 15000      # 餐馆服务读取超时 15 秒
+
+# Feign 日志级别
+logging:
+  level:
+    com.vapor.admin.client: DEBUG
+    feign: DEBUG
