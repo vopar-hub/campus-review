@@ -22,32 +22,22 @@ import java.util.List;
 @Service
 public class AdminOrchestratorService {
     private static final Logger log = LoggerFactory.getLogger(AdminOrchestratorService.class);
-    private static final ParameterizedTypeReference<ApiResponse<List<UserDTO>>> USER_LIST_TYPE =
-            new ParameterizedTypeReference<>() {};
-    private static final ParameterizedTypeReference<ApiResponse<List<RestaurantDTO>>> RESTAURANT_LIST_TYPE =
-            new ParameterizedTypeReference<>() {};
-    private static final ParameterizedTypeReference<ApiResponse<RestaurantDTO>> RESTAURANT_CREATE_TYPE =
-            new ParameterizedTypeReference<>() {};
 
-    private final RestClient restClient;
-    private final String userServiceBaseUrl;
-    private final String restaurantServiceBaseUrl;
+    private final UserServiceClient userServiceClient;
+    private final RestaurantServiceClient restaurantServiceClient;
 
     /**
      * 构造编排服务。
      *
-     * @param restClient HTTP 客户端
-     * @param userServiceBaseUrl 用户服务基础地址
-     * @param restaurantServiceBaseUrl 餐厅服务基础地址
+     * @param userServiceClient 用户服务 Feign 客户端
+     * @param restaurantServiceClient 餐馆服务 Feign 客户端
      */
     public AdminOrchestratorService(
-            RestClient restClient,
-            @Value("${downstream.user-service-base-url}") String userServiceBaseUrl,
-            @Value("${downstream.restaurant-service-base-url}") String restaurantServiceBaseUrl
+            UserServiceClient userServiceClient,
+            RestaurantServiceClient restaurantServiceClient
     ) {
-        this.restClient = restClient;
-        this.userServiceBaseUrl = userServiceBaseUrl;
-        this.restaurantServiceBaseUrl = restaurantServiceBaseUrl;
+        this.userServiceClient = userServiceClient;
+        this.restaurantServiceClient = restaurantServiceClient;
     }
 
     /**
