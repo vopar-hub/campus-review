@@ -2,6 +2,7 @@ package com.vapor.ranking.client;
 
 import com.vapor.common.api.ApiResponse;
 import com.vapor.model.restaurant.RestaurantDTO;
+import com.vapor.ranking.client.fallback.RestaurantServiceClientFallback;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
