@@ -1,6 +1,7 @@
 package com.vapor.admin.service;
 
-import com.vapor.common.api.ApiResponse;
+import com.vapor.admin.client.RestaurantServiceClient;
+import com.vapor.admin.client.UserServiceClient;
 import com.vapor.common.error.BizException;
 import com.vapor.common.util.UserContextUtil;
 import com.vapor.common.web.UserContext;
@@ -9,10 +10,7 @@ import com.vapor.model.restaurant.RestaurantDTO;
 import com.vapor.model.user.UserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 
 import java.util.List;
 
