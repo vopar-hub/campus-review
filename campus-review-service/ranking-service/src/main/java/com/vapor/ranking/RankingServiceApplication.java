@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * 启用定时调度，用于周期性刷新排行榜数据。
  */
 @SpringBootApplication(scanBasePackages = "com.vapor")
+@EnableFeignClients(basePackages = "com.vapor.ranking.client")
 @EnableScheduling
 public class RankingServiceApplication {
     /**
