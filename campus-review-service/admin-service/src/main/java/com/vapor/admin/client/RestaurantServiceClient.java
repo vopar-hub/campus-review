@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * 餐馆服务 Feign 客户端（管理端）。
  */
-@FeignClient(name = "restaurant-service")
+@FeignClient(name = "restaurant-service", fallback = RestaurantServiceClientFallback.class)
 public interface RestaurantServiceClient {
 
     /**
