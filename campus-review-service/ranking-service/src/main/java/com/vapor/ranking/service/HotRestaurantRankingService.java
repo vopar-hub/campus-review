@@ -47,19 +47,11 @@ public class HotRestaurantRankingService {
     private final double minRating;
     private final String redisKey;
 
-    private static final ParameterizedTypeReference<ApiResponse<List<RestaurantDTO>>> RESTAURANT_LIST_TYPE =
-            new ParameterizedTypeReference<>() {};
-    private static final ParameterizedTypeReference<ApiResponse<InteractionCountDTO>> COUNT_TYPE =
-            new ParameterizedTypeReference<>() {};
-    private static final ParameterizedTypeReference<ApiResponse<List<ReviewDTO>>> REVIEW_LIST_TYPE =
-            new ParameterizedTypeReference<>() {};
-
-    private final RestClient restClient;
+    private final RestaurantServiceClient restaurantServiceClient;
+    private final InteractionServiceClient interactionServiceClient;
+    private final ReviewServiceClient reviewServiceClient;
     private final HotRestaurantRankMapper hotRestaurantRankMapper;
     private final StringRedisTemplate redisTemplate;
-    private final String restaurantBaseUrl;
-    private final String interactionBaseUrl;
-    private final String reviewBaseUrl;
 
     /**
      * 构造服务。
