@@ -28,24 +28,24 @@ class RestaurantServiceClientFallbackTest {
     @Test
     void testGetRestaurants_Fallback() {
         // 执行
-        ApiResponse<List<RestaurantDTO>> result = fallback.getRestaurants();
+        var result = fallback.getRestaurants();
 
-        // 验证
+        // 验证 - 返回空列表作为降级
         assertNotNull(result);
-        assertFalse(result.getSuccess());
-        assertEquals("服务暂时不可用，请稍后重试", result.getMessage());
-        assertNull(result.getData());
+        assertEquals(0, result.getCode());
+        assertNotNull(result.getData());
+        assertTrue(result.getData().isEmpty());
     }
 
     @Test
     void testGetRestaurantsByIds_Fallback() {
         // 执行
-        ApiResponse<List<RestaurantDTO>> result = fallback.getRestaurantsByIds(List.of(1L, 2L));
+        var result = fallback.getRestaurantsByIds(List.of(1L, 2L));
 
         // 验证
         assertNotNull(result);
-        assertFalse(result.getSuccess());
-        assertEquals("服务暂时不可用，请稍后重试", result.getMessage());
-        assertNull(result.getData());
+        assertEquals(0, result.getCode());
+        assertNotNull(result.getData());
+        assertTrue(result.getData().isEmpty());
     }
 }
