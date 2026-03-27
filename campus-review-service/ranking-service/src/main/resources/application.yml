@@ -74,6 +74,9 @@ feign:
         readTimeout: 15000      # 餐馆服务读取超时 15 秒
       review-service:
         readTimeout: 15000      # 评价服务读取超时 15 秒
+  # 启用熔断器支持 fallback
+  circuitbreaker:
+    enabled: false
 
 # Feign 日志级别
 logging:
