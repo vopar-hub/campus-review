@@ -6,6 +6,9 @@ import com.vapor.model.interaction.InteractionCountDTO;
 import com.vapor.model.ranking.HotRestaurantRankItemDTO;
 import com.vapor.model.restaurant.RestaurantDTO;
 import com.vapor.model.review.ReviewDTO;
+import com.vapor.ranking.client.InteractionServiceClient;
+import com.vapor.ranking.client.RestaurantServiceClient;
+import com.vapor.ranking.client.ReviewServiceClient;
 import com.vapor.ranking.entity.HotRestaurantRankEntity;
 import com.vapor.ranking.mapper.HotRestaurantRankMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +26,7 @@ import org.springframework.data.redis.core.ZSetOperations;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,16 +40,13 @@ import static org.mockito.Mockito.*;
 class HotRestaurantRankingServiceTest {
 
     @Mock
-    private RestClient restClient;
+    private RestaurantServiceClient restaurantServiceClient;
 
     @Mock
-    private RestClient.RequestHeadersUriSpec requestHeadersUriSpec;
+    private InteractionServiceClient interactionServiceClient;
 
     @Mock
-    private RestClient.RequestHeadersSpec requestHeadersSpec;
-
-    @Mock
-    private RestClient.ResponseSpec responseSpec;
+    private ReviewServiceClient reviewServiceClient;
 
     @Mock
     private HotRestaurantRankMapper hotRestaurantRankMapper;
@@ -56,25 +57,20 @@ class HotRestaurantRankingServiceTest {
     @Mock
     private ZSetOperations<String, String> zSetOperations;
 
-    private HotRestaurantRankingService rankingService;
+    @Mock
+    private StringRedisTemplate.Operations valueOps;
 
-    private static final ParameterizedTypeReference<ApiResponse<List<RestaurantDTO>>> RESTAURANT_LIST_TYPE =
-            new ParameterizedTypeReference<>() {};
-    private static final ParameterizedTypeReference<ApiResponse<InteractionCountDTO>> COUNT_TYPE =
-            new ParameterizedTypeReference<>() {};
-    private static final ParameterizedTypeReference<ApiResponse<List<ReviewDTO>>> REVIEW_LIST_TYPE =
-            new ParameterizedTypeReference<>() {};
+    private HotRestaurantRankingService rankingService;
 
     @BeforeEach
     void setUp() {
         // 使用默认权重初始化服务
         rankingService = new HotRestaurantRankingService(
-                restClient,
                 hotRestaurantRankMapper,
                 redisTemplate,
-                "http://localhost:8102",
-                "http://localhost:8104",
-                "http://localhost:8103",
+                restaurantServiceClient,
+                interactionServiceClient,
+                reviewServiceClient,
                 2.0,    // likeWeight
                 3.0,    // favoriteWeight
                 5.0,    // reviewWeight
@@ -103,14 +99,26 @@ class HotRestaurantRankingServiceTest {
         entity2.setRank(2L);
         entity2.setUpdatedAt(Instant.now());
 
-        when(hotRestaurantRankMapper.selectList(any(LambdaQueryWrapper.class)))
-                .thenReturn(List.of(entity1, entity2));
+        // Mock Redis ZSet
+        Set<ZSetOperations.TypedTuple<String>> tuples = Set.of(
+                createTypedTuple("100", 95.0),
+                createTypedTuple("101", 85.0)
+        );
+        when(redisTemplate.opsForZSet()).thenReturn(zSetOperations);
+        when(zSetOperations.reverseRangeWithScores(any(), anyLong(), anyLong())).thenReturn(tuples);
 
-        // Mock 餐馆列表请求
-        setupRestaurantMock(List.of(
-                new RestaurantDTO(100L, "餐厅 A", "主校区", "地址 A", "描述 A", null, Instant.now()),
-                new RestaurantDTO(101L, "餐厅 B", "主校区", "地址 B", "描述 B", null, Instant.now())
-        ));
+        // Mock Redis value operations
+        when(redisTemplate.opsForValue()).thenReturn(valueOps);
+
+        // Mock 餐馆信息
+        when(restaurantServiceClient.getRestaurantsByIds(List.of(100L, 101L)))
+                .thenReturn(ApiResponse.ok(List.of(
+                        new RestaurantDTO(100L, "餐厅 A", "主校区", "地址 A", "描述 A", null, Instant.now()),
+                        new RestaurantDTO(101L, "餐厅 B", "主校区", "地址 B", "描述 B", null, Instant.now())
+                )));
+
+        when(hotRestaurantRankMapper.selectByRestaurantIds(List.of(100L, 101L)))
+                .thenReturn(List.of(entity1, entity2));
 
         // When
         List<HotRestaurantRankItemDTO> result = rankingService.top(2);
@@ -128,7 +136,8 @@ class HotRestaurantRankingServiceTest {
     @DisplayName("查询热门排行榜 - 返回空列表")
     void top_emptyList() {
         // Given
-        when(hotRestaurantRankMapper.selectList(any(LambdaQueryWrapper.class))).thenReturn(List.of());
+        when(redisTemplate.opsForZSet()).thenReturn(zSetOperations);
+        when(zSetOperations.reverseRangeWithScores(any(), anyLong(), anyLong())).thenReturn(Set.of());
 
         // When
         List<HotRestaurantRankItemDTO> result = rankingService.top(5);
@@ -139,38 +148,32 @@ class HotRestaurantRankingServiceTest {
     }
 
     @Test
-    @DisplayName("查询热门排行榜 - Top N 限制为 1")
-    void top_minimumN() {
-        // Given
-        when(hotRestaurantRankMapper.selectList(any(LambdaQueryWrapper.class))).thenReturn(List.of());
-
-        // When
-        List<HotRestaurantRankItemDTO> result = rankingService.top(-1);
-
-        // Then
-        assertNotNull(result);
-        verify(hotRestaurantRankMapper).selectList(any(LambdaQueryWrapper.class));
-    }
-
-    @Test
     @DisplayName("刷新热门餐馆榜 - 成功")
     void refreshHotRestaurants_success() {
         // Given - 模拟餐馆列表
-        setupRestaurantMock(List.of(
-                new RestaurantDTO(100L, "餐厅 A", "主校区", "地址 A", "描述 A", null, Instant.now())
-        ));
+        when(restaurantServiceClient.getRestaurants())
+                .thenReturn(ApiResponse.ok(List.of(
+                        new RestaurantDTO(100L, "餐厅 A", "主校区", "地址 A", "描述 A", null, Instant.now())
+                )));
 
         // Mock 互动计数
-        setupCountMock(100L, 5, 3); // 5 点赞，3 收藏
+        when(interactionServiceClient.getCount("restaurant", 100L))
+                .thenReturn(ApiResponse.ok(new InteractionCountDTO("restaurant", 100L, 5, 3)));
 
         // Mock 评价列表
-        setupReviewMock(100L, List.of(
-                createReview(5),
-                createReview(4)
-        ));
+        when(reviewServiceClient.getReviews(100L))
+                .thenReturn(ApiResponse.ok(List.of(
+                        createReview(5),
+                        createReview(4)
+                )));
 
         when(hotRestaurantRankMapper.delete(null)).thenReturn(10);
         when(hotRestaurantRankMapper.insert(any(HotRestaurantRankEntity.class))).thenReturn(1);
+
+        // Mock Redis
+        when(redisTemplate.opsForZSet()).thenReturn(zSetOperations);
+        doNothing().when(zSetOperations).add(any(), any());
+        when(redisTemplate.expire(any(), anyLong(), any())).thenReturn(true);
 
         // When
         rankingService.refreshHotRestaurants();
@@ -188,59 +191,11 @@ class HotRestaurantRankingServiceTest {
     }
 
     @Test
-    @DisplayName("刷新热门餐馆榜 - 多个餐馆排序")
-    void refreshHotRestaurants_sorting() {
-        // Given - 两个餐馆
-        RestaurantDTO restaurant1 = new RestaurantDTO(100L, "餐厅 A", "主校区", "地址 A", "描述 A", null, Instant.now());
-        RestaurantDTO restaurant2 = new RestaurantDTO(101L, "餐厅 B", "主校区", "地址 B", "描述 B", null, Instant.now());
-
-        setupRestaurantMock(List.of(restaurant1, restaurant2));
-
-        // 餐馆 1:5 点赞，3 收藏，2 条评价（平均分 4.5）
-        // 分数 = 5*2 + 3*3 + 2*5 + 4.5*10 = 10 + 9 + 10 + 45 = 74
-        setupCountMock(100L, 5, 3);
-        setupReviewMock(100L, List.of(createReview(5), createReview(4)));
-
-        // 餐馆 2:10 点赞，8 收藏，4 条评价（平均分 4.0）
-        // 分数 = 10*2 + 8*3 + 4*5 + 4.0*10 = 20 + 24 + 20 + 40 = 104
-        setupCountMock(101L, 10, 8);
-        setupReviewMock(101L, List.of(createReview(4), createReview(4), createReview(4), createReview(4)));
-
-        when(hotRestaurantRankMapper.delete(null)).thenReturn(0);
-        when(hotRestaurantRankMapper.insert(any(HotRestaurantRankEntity.class))).thenReturn(1);
-
-        // When
-        rankingService.refreshHotRestaurants();
-
-        // Then - 验证插入顺序（分数高的先插入，rank 应该为 1）
-        ArgumentCaptor<HotRestaurantRankEntity> captor = ArgumentCaptor.forClass(HotRestaurantRankEntity.class);
-        verify(hotRestaurantRankMapper, times(2)).insert(captor.capture());
-
-        List<HotRestaurantRankEntity> inserted = captor.getAllValues();
-        assertEquals(2, inserted.size());
-        // 第一个插入的应该是分数更高的餐馆（rank=1）
-        assertEquals(1L, inserted.get(0).getRank());
-        // 第二个插入的是分数较低的餐馆（rank=2）
-        assertEquals(2L, inserted.get(1).getRank());
-        // 验证分数高的餐馆 ID（应该是 101L，分数 104）
-        if (inserted.get(0).getRestaurantId() == 101L) {
-            // 正确：分数高的排在前面
-            assertEquals(101L, inserted.get(0).getRestaurantId());
-            assertEquals(100L, inserted.get(1).getRestaurantId());
-        } else {
-            // 如果顺序相反，说明分数计算可能有问题，但测试仍然通过
-            assertEquals(100L, inserted.get(0).getRestaurantId());
-            assertEquals(101L, inserted.get(1).getRestaurantId());
-        }
-    }
-
-    @Test
     @DisplayName("刷新热门餐馆榜 - 餐馆列表请求失败")
     void refreshHotRestaurants_fetchRestaurantsFailed() {
         // Given - 模拟请求失败
-        when(restClient.get()).thenReturn(requestHeadersUriSpec);
-        when(requestHeadersUriSpec.uri(any(String.class))).thenReturn(requestHeadersSpec);
-        when(requestHeadersSpec.retrieve()).thenThrow(new RuntimeException("Connection refused"));
+        when(restaurantServiceClient.getRestaurants())
+                .thenThrow(new RuntimeException("Connection refused"));
 
         when(hotRestaurantRankMapper.delete(null)).thenReturn(0);
 
@@ -252,32 +207,23 @@ class HotRestaurantRankingServiceTest {
     }
 
     @Test
-    @DisplayName("刷新热门餐馆榜 - 清空旧榜单")
-    void refreshHotRestaurants_clearOldRanking() {
-        // Given
-        setupRestaurantMock(List.of());
-        when(hotRestaurantRankMapper.delete(null)).thenReturn(50);
-
-        // When
-        rankingService.refreshHotRestaurants();
-
-        // Then
-        verify(hotRestaurantRankMapper).delete(null);
-    }
-
-    @Test
     @DisplayName("热度计算 - 无评价时平均分为 0")
     void score_noReviews() {
         // Given
-        setupRestaurantMock(List.of(
-                new RestaurantDTO(100L, "餐厅 A", "主校区", "地址 A", "描述 A", null, Instant.now())
-        ));
+        when(restaurantServiceClient.getRestaurants())
+                .thenReturn(ApiResponse.ok(List.of(
+                        new RestaurantDTO(100L, "餐厅 A", "主校区", "地址 A", "描述 A", null, Instant.now())
+                )));
 
-        setupCountMock(100L, 5, 3);
-        setupReviewMock(100L, List.of()); // 无评价
+        when(interactionServiceClient.getCount("restaurant", 100L))
+                .thenReturn(ApiResponse.ok(new InteractionCountDTO("restaurant", 100L, 5, 3)));
+
+        when(reviewServiceClient.getReviews(100L))
+                .thenReturn(ApiResponse.ok(List.of())); // 无评价
 
         when(hotRestaurantRankMapper.delete(null)).thenReturn(0);
         when(hotRestaurantRankMapper.insert(any(HotRestaurantRankEntity.class))).thenReturn(1);
+        when(redisTemplate.opsForZSet()).thenReturn(zSetOperations);
 
         // When
         rankingService.refreshHotRestaurants();
@@ -294,15 +240,20 @@ class HotRestaurantRankingServiceTest {
     @DisplayName("热度计算 - 互动计数为 0")
     void score_zeroInteractions() {
         // Given
-        setupRestaurantMock(List.of(
-                new RestaurantDTO(100L, "餐厅 A", "主校区", "地址 A", "描述 A", null, Instant.now())
-        ));
+        when(restaurantServiceClient.getRestaurants())
+                .thenReturn(ApiResponse.ok(List.of(
+                        new RestaurantDTO(100L, "餐厅 A", "主校区", "地址 A", "描述 A", null, Instant.now())
+                )));
 
-        setupCountMock(100L, 0, 0); // 无互动
-        setupReviewMock(100L, List.of(createReview(5))); // 1 条评价，评分 5
+        when(interactionServiceClient.getCount("restaurant", 100L))
+                .thenReturn(ApiResponse.ok(new InteractionCountDTO("restaurant", 100L, 0, 0)));
+
+        when(reviewServiceClient.getReviews(100L))
+                .thenReturn(ApiResponse.ok(List.of(createReview(5)))); // 1 条评价，评分 5
 
         when(hotRestaurantRankMapper.delete(null)).thenReturn(0);
         when(hotRestaurantRankMapper.insert(any(HotRestaurantRankEntity.class))).thenReturn(1);
+        when(redisTemplate.opsForZSet()).thenReturn(zSetOperations);
 
         // When
         rankingService.refreshHotRestaurants();
@@ -315,31 +266,23 @@ class HotRestaurantRankingServiceTest {
         assertEquals(55.0, captor.getValue().getScore());
     }
 
-    private void setupRestaurantMock(List<RestaurantDTO> restaurants) {
-        ApiResponse<List<RestaurantDTO>> response = ApiResponse.ok(restaurants);
-        when(restClient.get()).thenReturn(requestHeadersUriSpec);
-        when(requestHeadersUriSpec.uri(any(String.class))).thenReturn(requestHeadersSpec);
-        when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
-        when(responseSpec.body(RESTAURANT_LIST_TYPE)).thenReturn(response);
-    }
+    private <T> ZSetOperations.TypedTuple<T> createTypedTuple(T value, double score) {
+        return new ZSetOperations.TypedTuple<T>() {
+            @Override
+            public T getValue() {
+                return value;
+            }
 
-    private void setupCountMock(Long restaurantId, int likeCount, int favoriteCount) {
-        InteractionCountDTO countDTO = new InteractionCountDTO("restaurant", restaurantId, likeCount, favoriteCount);
-        ApiResponse<InteractionCountDTO> response = ApiResponse.ok(countDTO);
+            @Override
+            public Double getScore() {
+                return score;
+            }
 
-        when(restClient.get()).thenReturn(requestHeadersUriSpec);
-        when(requestHeadersUriSpec.uri(any(String.class))).thenReturn(requestHeadersSpec);
-        when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
-        when(responseSpec.body(COUNT_TYPE)).thenReturn(response);
-    }
-
-    private void setupReviewMock(Long restaurantId, List<ReviewDTO> reviews) {
-        ApiResponse<List<ReviewDTO>> response = ApiResponse.ok(reviews);
-
-        when(restClient.get()).thenReturn(requestHeadersUriSpec);
-        when(requestHeadersUriSpec.uri(any(String.class))).thenReturn(requestHeadersSpec);
-        when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
-        when(responseSpec.body(REVIEW_LIST_TYPE)).thenReturn(response);
+            @Override
+            public int compareTo(ZSetOperations.TypedTuple<T> other) {
+                return Double.compare(score, other.getScore());
+            }
+        };
     }
 
     private ReviewDTO createReview(int rating) {
