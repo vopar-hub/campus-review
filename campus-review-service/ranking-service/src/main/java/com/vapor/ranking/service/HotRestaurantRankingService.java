@@ -252,10 +252,7 @@ public class HotRestaurantRankingService {
      */
     private List<RestaurantDTO> fetchRestaurants() {
         try {
-            ApiResponse<List<RestaurantDTO>> resp = restClient.get()
-                    .uri(restaurantBaseUrl + "/api/restaurants")
-                    .retrieve()
-                    .body(RESTAURANT_LIST_TYPE);
+            ApiResponse<List<RestaurantDTO>> resp = restaurantServiceClient.getRestaurants();
             return resp == null || resp.getData() == null ? List.of() : resp.getData();
         } catch (Exception e) {
             log.error("拉取餐馆列表失败：error={}", e.getMessage(), e);
@@ -274,12 +271,7 @@ public class HotRestaurantRankingService {
             return List.of();
         }
         try {
-            String url = restaurantBaseUrl + "/api/restaurants/by-ids?ids=" +
-                    String.join(",", ids.stream().map(String::valueOf).toList());
-            ApiResponse<List<RestaurantDTO>> resp = restClient.get()
-                    .uri(url)
-                    .retrieve()
-                    .body(RESTAURANT_LIST_TYPE);
+            ApiResponse<List<RestaurantDTO>> resp = restaurantServiceClient.getRestaurantsByIds(ids);
             return resp == null || resp.getData() == null ? List.of() : resp.getData();
         } catch (Exception e) {
             log.error("批量拉取餐馆列表失败：ids={}, error={}", ids, e.getMessage(), e);
