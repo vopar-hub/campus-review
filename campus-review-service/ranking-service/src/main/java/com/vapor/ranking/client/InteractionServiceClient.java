@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * 互动服务 Feign 客户端。
  */
-@FeignClient(name = "interaction-service")
+@FeignClient(name = "interaction-service", fallback = InteractionServiceClientFallback.class)
 public interface InteractionServiceClient {
 
     /**
