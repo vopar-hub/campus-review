@@ -2,6 +2,7 @@ package com.vapor.admin.service;
 
 import com.vapor.admin.client.RestaurantServiceClient;
 import com.vapor.admin.client.UserServiceClient;
+import com.vapor.common.api.ApiResponse;
 import com.vapor.common.error.BizException;
 import com.vapor.common.util.UserContextUtil;
 import com.vapor.common.web.UserContext;
