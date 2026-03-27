@@ -32,15 +32,4 @@ public class AdminServiceConfig {
     public UserContextFilter userContextFilter() {
         return new UserContextFilter();
     }
-
-    /**
-     * 下游服务调用用 RestClient。
-     *
-     * @param builder RestClient 构建器
-     * @return RestClient
-     */
-    @Bean
-    public RestClient restClient(RestClient.Builder builder) {
-        return builder.build();
-    }
 }
