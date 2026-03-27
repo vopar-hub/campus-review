@@ -28,11 +28,11 @@ class ReviewServiceClientFallbackTest {
     @Test
     void testGetReviews_Fallback() {
         // 执行
-        ApiResponse<List<ReviewDTO>> result = fallback.getReviews(1L);
+        var result = fallback.getReviews(1L);
 
         // 验证 - 降级时返回空列表
         assertNotNull(result);
-        assertTrue(result.getSuccess());
+        assertEquals(0, result.getCode());
         assertNotNull(result.getData());
         assertTrue(result.getData().isEmpty());
     }
