@@ -30,7 +30,7 @@ class InteractionServiceClientFallbackTest {
 
         // 验证 - 降级时返回默认的 0 值
         assertNotNull(result);
-        assertTrue(result.getSuccess());
+        assertEquals(0, result.getCode());
         assertNotNull(result.getData());
         assertEquals("restaurant", result.getData().targetType());
         assertEquals(1L, result.getData().targetId());
