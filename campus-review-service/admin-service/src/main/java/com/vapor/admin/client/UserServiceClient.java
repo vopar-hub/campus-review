@@ -1,5 +1,6 @@
 package com.vapor.admin.client;
 
+import com.vapor.admin.client.fallback.UserServiceClientFallback;
 import com.vapor.common.api.ApiResponse;
 import com.vapor.model.user.UserDTO;
 import org.springframework.cloud.openfeign.FeignClient;
