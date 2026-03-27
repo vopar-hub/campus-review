@@ -56,11 +56,11 @@ public class HotRestaurantRankingService {
     /**
      * 构造服务。
      *
-     * @param restClient HTTP 客户端
      * @param hotRestaurantRankMapper 排行榜数据访问组件
-     * @param restaurantBaseUrl 餐馆服务基础地址
-     * @param interactionBaseUrl 互动服务基础地址
-     * @param reviewBaseUrl 评价服务基础地址
+     * @param redisTemplate Redis 模板
+     * @param restaurantServiceClient 餐馆服务 Feign 客户端
+     * @param interactionServiceClient 互动服务 Feign 客户端
+     * @param reviewServiceClient 评价服务 Feign 客户端
      * @param likeWeight 点赞权重（从配置文件读取，默认 2.0）
      * @param favoriteWeight 收藏权重（从配置文件读取，默认 3.0）
      * @param reviewWeight 评价权重（从配置文件读取，默认 5.0）
@@ -68,15 +68,13 @@ public class HotRestaurantRankingService {
      * @param minReviewCount 最小评论数要求（从配置文件读取，默认 5）
      * @param minRating 最小评分要求（从配置文件读取，默认 3.0）
      * @param redisKey Redis 中存储排行榜的 key（从配置文件读取）
-     * @param redisTemplate Redis 模板
      */
     public HotRestaurantRankingService(
-            RestClient restClient,
             HotRestaurantRankMapper hotRestaurantRankMapper,
             StringRedisTemplate redisTemplate,
-            @Value("${downstream.restaurant-service-base-url:http://localhost:8102}") String restaurantBaseUrl,
-            @Value("${downstream.interaction-service-base-url:http://localhost:8104}") String interactionBaseUrl,
-            @Value("${downstream.review-service-base-url:http://localhost:8103}") String reviewBaseUrl,
+            RestaurantServiceClient restaurantServiceClient,
+            InteractionServiceClient interactionServiceClient,
+            ReviewServiceClient reviewServiceClient,
             @Value("${ranking.hot-restaurants.like-weight:2.0}") double likeWeight,
             @Value("${ranking.hot-restaurants.favorite-weight:3.0}") double favoriteWeight,
             @Value("${ranking.hot-restaurants.review-weight:5.0}") double reviewWeight,
@@ -85,12 +83,11 @@ public class HotRestaurantRankingService {
             @Value("${ranking.hot-restaurants.min-rating:3.0}") double minRating,
             @Value("${ranking.hot-restaurants.redis-key:ranking:hot-restaurants}") String redisKey
     ) {
-        this.restClient = restClient;
         this.hotRestaurantRankMapper = hotRestaurantRankMapper;
         this.redisTemplate = redisTemplate;
-        this.restaurantBaseUrl = restaurantBaseUrl;
-        this.interactionBaseUrl = interactionBaseUrl;
-        this.reviewBaseUrl = reviewBaseUrl;
+        this.restaurantServiceClient = restaurantServiceClient;
+        this.interactionServiceClient = interactionServiceClient;
+        this.reviewServiceClient = reviewServiceClient;
         this.likeWeight = likeWeight;
         this.favoriteWeight = favoriteWeight;
         this.reviewWeight = reviewWeight;
