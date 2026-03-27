@@ -2,6 +2,7 @@ package com.vapor.ranking.config;
 
 import com.vapor.common.web.RequestIdFilter;
 import com.vapor.common.web.UserContextFilter;
+import feign.codec.ErrorDecoder;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
