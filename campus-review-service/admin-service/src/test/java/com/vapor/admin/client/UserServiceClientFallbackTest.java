@@ -6,13 +6,11 @@ import com.vapor.model.user.UserDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * 用户服务 Feign 客户端降级测试。
@@ -34,7 +32,7 @@ class UserServiceClientFallbackTest {
 
         // 验证
         assertNotNull(result);
-        assertFalse(result.getSuccess());
+        assertEquals(50000, result.getCode());
         assertEquals("服务暂时不可用，请稍后重试", result.getMessage());
         assertNull(result.getData());
     }
@@ -46,7 +44,7 @@ class UserServiceClientFallbackTest {
 
         // 验证
         assertNotNull(result);
-        assertFalse(result.getSuccess());
+        assertEquals(50000, result.getCode());
         assertEquals("服务暂时不可用，请稍后重试", result.getMessage());
     }
 
@@ -57,7 +55,7 @@ class UserServiceClientFallbackTest {
 
         // 验证
         assertNotNull(result);
-        assertFalse(result.getSuccess());
+        assertEquals(50000, result.getCode());
         assertEquals("服务暂时不可用，请稍后重试", result.getMessage());
     }
 }
