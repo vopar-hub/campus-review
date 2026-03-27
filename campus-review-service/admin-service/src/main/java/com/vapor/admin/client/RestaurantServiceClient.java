@@ -1,5 +1,6 @@
 package com.vapor.admin.client;
 
+import com.vapor.admin.client.fallback.RestaurantServiceClientFallback;
 import com.vapor.common.api.ApiResponse;
 import com.vapor.model.restaurant.RestaurantCreateRequest;
 import com.vapor.model.restaurant.RestaurantDTO;
