@@ -50,12 +50,7 @@ public class AdminOrchestratorService {
         UserContext ctx = UserContextUtil.requireUserContext();
         log.info("获取用户列表：adminId={}", ctx.getUserId());
 
-        ApiResponse<List<UserDTO>> resp = restClient.get()
-                .uri(userServiceBaseUrl + "/api/admin/users")
-                .header("X-User-Id", String.valueOf(ctx.getUserId()))
-                .header("X-User-Roles", String.join(",", ctx.getRoles()))
-                .retrieve()
-                .body(USER_LIST_TYPE);
+        ApiResponse<List<UserDTO>> resp = userServiceClient.getUsers();
         return resp == null || resp.getData() == null ? List.of() : resp.getData();
     }
 
@@ -69,12 +64,7 @@ public class AdminOrchestratorService {
         UserContext ctx = UserContextUtil.requireUserContext();
         log.info("封禁用户：userId={}, adminId={}", userId, ctx.getUserId());
 
-        restClient.post()
-                .uri(userServiceBaseUrl + "/api/admin/users/" + userId + "/ban")
-                .header("X-User-Id", String.valueOf(ctx.getUserId()))
-                .header("X-User-Roles", String.join(",", ctx.getRoles()))
-                .retrieve()
-                .toBodilessEntity();
+        userServiceClient.banUser(userId);
     }
 
     /**
@@ -87,12 +77,7 @@ public class AdminOrchestratorService {
         UserContext ctx = UserContextUtil.requireUserContext();
         log.info("解封用户：userId={}, adminId={}", userId, ctx.getUserId());
 
-        restClient.post()
-                .uri(userServiceBaseUrl + "/api/admin/users/" + userId + "/unban")
-                .header("X-User-Id", String.valueOf(ctx.getUserId()))
-                .header("X-User-Roles", String.join(",", ctx.getRoles()))
-                .retrieve()
-                .toBodilessEntity();
+        userServiceClient.unbanUser(userId);
     }
 
     /**
@@ -105,12 +90,7 @@ public class AdminOrchestratorService {
         UserContext ctx = UserContextUtil.requireUserContext();
         log.info("获取餐厅列表：adminId={}", ctx.getUserId());
 
-        ApiResponse<List<RestaurantDTO>> resp = restClient.get()
-                .uri(restaurantServiceBaseUrl + "/api/admin/restaurants")
-                .header("X-User-Id", String.valueOf(ctx.getUserId()))
-                .header("X-User-Roles", String.join(",", ctx.getRoles()))
-                .retrieve()
-                .body(RESTAURANT_LIST_TYPE);
+        ApiResponse<List<RestaurantDTO>> resp = restaurantServiceClient.getRestaurants();
         return resp == null || resp.getData() == null ? List.of() : resp.getData();
     }
 
@@ -125,13 +105,7 @@ public class AdminOrchestratorService {
         UserContext ctx = UserContextUtil.requireUserContext();
         log.info("创建餐厅：name={}, adminId={}", request.name(), ctx.getUserId());
 
-        ApiResponse<RestaurantDTO> resp = restClient.post()
-                .uri(restaurantServiceBaseUrl + "/api/admin/restaurants")
-                .header("X-User-Id", String.valueOf(ctx.getUserId()))
-                .header("X-User-Roles", String.join(",", ctx.getRoles()))
-                .body(request)
-                .retrieve()
-                .body(RESTAURANT_CREATE_TYPE);
+        ApiResponse<RestaurantDTO> resp = restaurantServiceClient.createRestaurant(request);
         return resp != null ? resp.getData() : null;
     }
 
@@ -145,11 +119,6 @@ public class AdminOrchestratorService {
         UserContext ctx = UserContextUtil.requireUserContext();
         log.info("删除餐厅：restaurantId={}, adminId={}", restaurantId, ctx.getUserId());
 
-        restClient.delete()
-                .uri(restaurantServiceBaseUrl + "/api/admin/restaurants/" + restaurantId)
-                .header("X-User-Id", String.valueOf(ctx.getUserId()))
-                .header("X-User-Roles", String.join(",", ctx.getRoles()))
-                .retrieve()
-                .toBodilessEntity();
+        restaurantServiceClient.deleteRestaurant(restaurantId);
     }
 }
