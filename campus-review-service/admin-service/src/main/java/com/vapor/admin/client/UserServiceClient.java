@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * 用户服务 Feign 客户端。
  */
-@FeignClient(name = "user-service")
+@FeignClient(name = "user-service", fallback = UserServiceClientFallback.class)
 public interface UserServiceClient {
 
     /**
