@@ -17,6 +17,7 @@ public class InteractionServiceClientFallback implements InteractionServiceClien
     @Override
     public ApiResponse<InteractionCountDTO> getCount(String targetType, Long targetId) {
         log.error("获取互动计数失败，targetType={}, targetId={}", targetType, targetId);
-        return ApiResponse.success(new InteractionCountDTO(targetType, targetId, 0, 0));
+        // 返回默认的 0 值
+        return ApiResponse.ok(new InteractionCountDTO(targetType, targetId, 0, 0));
     }
 }
