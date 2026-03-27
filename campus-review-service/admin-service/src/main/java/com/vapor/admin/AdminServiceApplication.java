@@ -10,6 +10,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * 提供后台统一管理 API，并通过编排方式调用用户/评价等下游微服务完成管理动作。
  */
 @SpringBootApplication(scanBasePackages = "com.vapor")
+@EnableFeignClients(basePackages = "com.vapor.admin.client")
 //@EnableDiscoveryClient
 public class AdminServiceApplication {
 
