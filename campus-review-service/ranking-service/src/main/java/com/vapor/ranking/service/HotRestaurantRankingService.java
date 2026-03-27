@@ -332,10 +332,7 @@ public class HotRestaurantRankingService {
      */
     private InteractionCountDTO fetchCounts(Long restaurantId) {
         try {
-            ApiResponse<InteractionCountDTO> resp = restClient.get()
-                    .uri(interactionBaseUrl + "/api/interactions/count?targetType=restaurant&targetId=" + restaurantId)
-                    .retrieve()
-                    .body(COUNT_TYPE);
+            ApiResponse<InteractionCountDTO> resp = interactionServiceClient.getCount("restaurant", restaurantId);
             return resp == null || resp.getData() == null
                     ? new InteractionCountDTO("restaurant", restaurantId, 0, 0)
                     : resp.getData();
@@ -353,10 +350,7 @@ public class HotRestaurantRankingService {
      */
     private List<ReviewDTO> fetchReviews(Long restaurantId) {
         try {
-            ApiResponse<List<ReviewDTO>> resp = restClient.get()
-                    .uri(reviewBaseUrl + "/api/reviews?restaurantId=" + restaurantId)
-                    .retrieve()
-                    .body(REVIEW_LIST_TYPE);
+            ApiResponse<List<ReviewDTO>> resp = reviewServiceClient.getReviews(restaurantId);
             return resp == null || resp.getData() == null ? List.of() : resp.getData();
         } catch (Exception e) {
             log.warn("拉取评价列表失败：restaurantId={}, error={}", restaurantId, e.getMessage());
