@@ -2,6 +2,7 @@ package com.vapor.admin.config;
 
 import com.vapor.common.web.RequestIdFilter;
 import com.vapor.common.web.UserContextFilter;
+import feign.codec.ErrorDecoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,5 +32,15 @@ public class AdminServiceConfig {
     @Bean
     public UserContextFilter userContextFilter() {
         return new UserContextFilter();
+    }
+
+    /**
+     * Feign 错误解码器 - 统一处理服务间调用的错误响应。
+     *
+     * @return 错误解码器
+     */
+    @Bean
+    public ErrorDecoder errorDecoder() {
+        return new FeignErrorDecoder();
     }
 }
