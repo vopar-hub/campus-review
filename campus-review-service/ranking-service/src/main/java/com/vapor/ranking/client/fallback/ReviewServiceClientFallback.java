@@ -19,6 +19,6 @@ public class ReviewServiceClientFallback implements ReviewServiceClient {
     @Override
     public ApiResponse<List<ReviewDTO>> getReviews(Long restaurantId) {
         log.error("获取评价列表失败，restaurantId={}", restaurantId);
-        return ApiResponse.success(List.of());
+        return ApiResponse.ok(List.of());
     }
 }
