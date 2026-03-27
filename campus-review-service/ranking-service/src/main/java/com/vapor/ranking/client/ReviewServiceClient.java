@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * 评价服务 Feign 客户端。
  */
-@FeignClient(name = "review-service")
+@FeignClient(name = "review-service", fallback = ReviewServiceClientFallback.class)
 public interface ReviewServiceClient {
 
     /**
