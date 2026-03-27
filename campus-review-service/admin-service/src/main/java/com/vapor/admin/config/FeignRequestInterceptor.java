@@ -1,7 +1,7 @@
 package com.vapor.admin.config;
 
-import com.vapor.common.util.UserContextUtil;
 import com.vapor.common.web.UserContext;
+import com.vapor.common.web.UserContextHolder;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ public class FeignRequestInterceptor implements RequestInterceptor {
 
     @Override
     public void apply(RequestTemplate template) {
-        UserContext ctx = UserContextUtil.getUserContext();
+        UserContext ctx = UserContextHolder.get();
         if (ctx != null && ctx.getUserId() != null) {
             template.header("X-User-Id", String.valueOf(ctx.getUserId()));
             template.header("X-User-Roles", String.join(",", ctx.getRoles()));
