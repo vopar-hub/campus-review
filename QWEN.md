@@ -74,7 +74,6 @@ campus-review/
 | interaction-service  | 8104 | 点赞/收藏互动   |
 | ranking-service      | 8105 | 排行榜计算     |
 | notification-service | 8106 | 消息通知      |
-| risk-control-service | 8107 | 风控审核      |
 | admin-service        | 8108 | 后台管理      |
 
 ### 网关端口
