@@ -252,8 +252,7 @@ public class HotRestaurantRankingService {
      */
     private List<RestaurantDTO> fetchRestaurants() {
         try {
-            ApiResponse<List<RestaurantDTO>> resp = restaurantServiceClient.getRestaurants();
-            return resp == null || resp.getData() == null ? List.of() : resp.getData();
+            return restaurantRankingDataService.getAllRestaurants();
         } catch (Exception e) {
             log.error("拉取餐馆列表失败：error={}", e.getMessage(), e);
             return List.of();
