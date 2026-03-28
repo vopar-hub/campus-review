@@ -24,7 +24,7 @@ campus-review/
 ├── campus-review-common       # 通用基础设施
 ├── campus-review-model        # 跨服务 DTO/模型
 ├── campus-review-utils        # 工具组件（JWT 等）
-├── campus-review-service      # 微服务聚合
+├── campus-review-service      # 微服务聚合（3 个核心服务）
 │   ├── user-service           # 用户服务 (8101) - 包含通知功能
 │   ├── restaurant-service     # 餐馆服务 (8102) - 包含排行榜功能
 │   └── review-service         # 评价服务 (8103) - 包含互动功能
@@ -33,6 +33,23 @@ campus-review/
 │   └── campus-review-admin-gateway  # 管理网关 (8002)
 └── docs                       # 项目文档
 ```
+
+### 微服务架构演进
+
+**v2.0+ 架构（当前）** - 从 8 个微服务优化为 3 个核心服务：
+
+| 原服务 | 状态 | 合并目标 |
+|--------|------|----------|
+| admin-service | ✅ 已移除 | 前端直接调用各服务 /api/admin/* 接口 |
+| interaction-service | ✅ 已合并 | review-service |
+| ranking-service | ✅ 已合并 | restaurant-service |
+| notification-service | ✅ 已合并 | user-service |
+
+**架构优化收益：**
+- 降低运维复杂度（8 服务 → 3 服务）
+- 减少网络调用开销（本地调用替代 Feign）
+- 简化部署配置（Nacos 配置减少 5 份）
+- 保持功能完整性和接口兼容性
 
 ## 快速开始
 
