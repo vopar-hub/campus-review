@@ -247,16 +247,17 @@ scrape_configs:
 - **API 文档**: 所有控制器已集成 OpenAPI 注解
 - **健康检查**: 提供 `/api/health` 和 `/api/health/ready` 端点
 - **数据库优化**: 关键查询已添加复合索引
-- **Redis 缓存**: 排行榜接口使用 Redis 缓存（5 分钟 TTL）
+- **Redis 缓存**: 排行榜接口使用 Redis ZSet 缓存（24 小时 TTL）
 - **分布式限流**: 基于 Redis Lua 脚本的滑动窗口限流算法
 - **密码安全**: 密码强度校验（至少 6 位且包含字母和数字）
 - **应用监控**: 集成 Spring Boot Actuator 和 Prometheus 指标
-- **容器化**: 支持 Docker 部署（10 个 Dockerfile）
+- **容器化**: 支持 Docker 部署
 - **CI/CD**: GitHub Actions 自动构建和测试
 - **安全防护**: CORS、安全响应头、JWT 鉴权、敏感词过滤
 - **日志管理**: 结构化日志、敏感信息脱敏、异步日志
 - **服务发现**: Nacos 服务注册与发现（支持负载均衡）
 - **数据库迁移**: Flyway 版本管理和自动迁移
+- **微服务优化**: 从 8 个服务精简为 3 个核心服务，降低运维复杂度
 
 ## 测试
 
