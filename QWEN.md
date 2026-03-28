@@ -266,7 +266,6 @@ ApiResponse.fail(errorCode, message);
 | `/api/interactions/**` | interaction-service |
 | `/api/rankings/**` | ranking-service |
 | `/api/notifications/**` | notification-service |
-| `/api/risk/**` | risk-control-service |
 
 **管理侧网关 (8002) 路由：**
 
