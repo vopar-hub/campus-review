@@ -76,9 +76,8 @@ mvn -pl campus-review-gateway/campus-review-user-gateway -am spring-boot:run
 | 服务 | Swagger UI |
 |------|-----------|
 | 用户服务 | http://localhost:8101/swagger-ui.html |
-| 餐馆服务 | http://localhost:8102/swagger-ui.html |
+| 餐馆服务（含排行榜） | http://localhost:8102/swagger-ui.html |
 | 评价服务（含互动） | http://localhost:8103/swagger-ui.html |
-| 排行榜服务 | http://localhost:8105/swagger-ui.html |
 | 通知服务 | http://localhost:8106/swagger-ui.html |
 
 **注意：** 后台管理接口已合并到各服务中，直接通过 admin-gateway 访问：
@@ -87,6 +86,9 @@ mvn -pl campus-review-gateway/campus-review-user-gateway -am spring-boot:run
 
 互动功能（点赞/收藏）已合并到 review-service，接口保持不变：
 - 互动操作：http://localhost:8103/api/interactions/*
+
+排行榜功能已合并到 restaurant-service：
+- 热门餐馆榜：http://localhost:8102/api/rankings/hot-restaurants
 
 ## 接口示例
 
