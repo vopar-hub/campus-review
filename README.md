@@ -27,8 +27,7 @@ campus-review/
 ├── campus-review-service      # 微服务聚合
 │   ├── user-service           # 用户服务 (8101)
 │   ├── restaurant-service     # 餐馆服务 (8102)
-│   ├── review-service         # 评价服务 (8103)
-│   ├── interaction-service    # 互动服务 (8104)
+│   ├── review-service         # 评价服务 (8103) - 包含互动功能
 │   ├── ranking-service        # 排行榜服务 (8105)
 │   └── notification-service   # 通知服务 (8106)
 ├── campus-review-gateway      # 网关聚合
