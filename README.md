@@ -168,16 +168,19 @@ security:
     secret: ${JWT_SECRET:dev-secret-change-to-32-chars-min}
     ttl-seconds: 86400
 
-# 热度权重（ranking-service）
+# 热度权重（restaurant-service 排行榜功能）
 ranking:
   hot-restaurants:
     like-weight: 2.0
     favorite-weight: 3.0
     review-weight: 5.0
     rating-weight: 10.0
-    refresh-ms: 60000
+    min-review-count: 5       # 最小评论数要求
+    min-rating: 3.0           # 最小评分要求
+    refresh-ms: 60000         # 定时刷新间隔（毫秒）
+    redis-key: ranking:hot-restaurants
 
-# Redis 配置（ranking-service）
+# Redis 配置（restaurant-service）
 spring:
   data:
     redis:
@@ -185,6 +188,14 @@ spring:
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
       database: ${REDIS_DATABASE:0}
+
+# Flyway 配置（各服务）
+spring:
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    validate-on-migrate: false
 ```
 
 ## 监控与可观测性
