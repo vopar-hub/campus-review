@@ -5,6 +5,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * 餐馆微服务启动入口。
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Bean;
  * 提供餐馆创建、查询与检索等能力。
  */
 @SpringBootApplication(scanBasePackages = "com.vapor")
+@EnableScheduling
 public class RestaurantServiceApplication {
     /**
      * Spring Boot 启动入口。
