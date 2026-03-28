@@ -47,7 +47,7 @@ public class HotRestaurantRankingService {
     private final double minRating;
     private final String redisKey;
 
-    private final RestaurantServiceClient restaurantServiceClient;
+    private final RestaurantRankingDataService restaurantRankingDataService;
     private final InteractionServiceClient interactionServiceClient;
     private final ReviewServiceClient reviewServiceClient;
     private final HotRestaurantRankMapper hotRestaurantRankMapper;
@@ -58,7 +58,7 @@ public class HotRestaurantRankingService {
      *
      * @param hotRestaurantRankMapper 排行榜数据访问组件
      * @param redisTemplate Redis 模板
-     * @param restaurantServiceClient 餐馆服务 Feign 客户端（本地）
+     * @param restaurantRankingDataService 餐馆排行榜数据服务（本地调用）
      * @param interactionServiceClient 互动服务 Feign 客户端（指向 review-service）
      * @param reviewServiceClient 评价服务 Feign 客户端
      * @param likeWeight 点赞权重（从配置文件读取，默认 2.0）
@@ -72,7 +72,7 @@ public class HotRestaurantRankingService {
     public HotRestaurantRankingService(
             HotRestaurantRankMapper hotRestaurantRankMapper,
             StringRedisTemplate redisTemplate,
-            RestaurantServiceClient restaurantServiceClient,
+            RestaurantRankingDataService restaurantRankingDataService,
             InteractionServiceClient interactionServiceClient,
             ReviewServiceClient reviewServiceClient,
             @Value("${ranking.hot-restaurants.like-weight:2.0}") double likeWeight,
@@ -85,7 +85,7 @@ public class HotRestaurantRankingService {
     ) {
         this.hotRestaurantRankMapper = hotRestaurantRankMapper;
         this.redisTemplate = redisTemplate;
-        this.restaurantServiceClient = restaurantServiceClient;
+        this.restaurantRankingDataService = restaurantRankingDataService;
         this.interactionServiceClient = interactionServiceClient;
         this.reviewServiceClient = reviewServiceClient;
         this.likeWeight = likeWeight;
