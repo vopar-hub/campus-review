@@ -19,7 +19,6 @@
         <module>interaction-service</module>
         <module>ranking-service</module>
         <module>notification-service</module>
-        <module>risk-control-service</module>
         <module>admin-service</module>
     </modules>
 
