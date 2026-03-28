@@ -83,7 +83,10 @@ mvn -pl campus-review-gateway/campus-review-user-gateway -am spring-boot:run
 | 互动服务 | http://localhost:8104/swagger-ui.html |
 | 排行榜服务 | http://localhost:8105/swagger-ui.html |
 | 通知服务 | http://localhost:8106/swagger-ui.html |
-| 管理服务 | http://localhost:8108/swagger-ui.html |
+
+**注意：** 后台管理接口已合并到各服务中，直接通过 admin-gateway 访问：
+- 用户管理：http://localhost:8002/api/admin/users
+- 餐厅管理：http://localhost:8002/api/admin/restaurants
 
 ## 接口示例
 
