@@ -301,7 +301,37 @@ docker-compose up -d
 ## 后续优化方向
 
 1. **链路追踪**: 集成 SkyWalking 或 Zipkin 实现分布式追踪
-2. **消息队列**: 引入 Kafka/RabbitMQ 实现异步解耦
+2. **消息队列**: 引入 Kafka/RabbitMQ 实现异步解耦（通知发送、评价审核）
 3. **弹性 resilience**: 集成 Resilience4j 实现熔断降级
 4. **API 版本管理**: 添加 URI 版本前缀支持
 5. **GraphQL 支持**: 为复杂查询场景提供 GraphQL API
+
+---
+
+## 更新日志
+
+### v2.0.0 (2026-03-28) - 微服务架构优化
+
+**架构重构**
+- ✅ 移除 admin-service，前端直接调用下游服务
+- ✅ 合并 interaction-service 到 review-service
+- ✅ 合并 ranking-service 到 restaurant-service
+- ✅ 合并 notification-service 到 user-service
+- ✅ 微服务数量：8 → 3
+
+**配置优化**
+- ✅ 更新 Nacos 配置（8 份 → 4 份）
+- ✅ 添加 Flyway 自动迁移配置
+- ✅ 添加 Redis 排行榜配置
+- ✅ 启用 @EnableScheduling 定时任务
+
+**代码优化**
+- ✅ 移除 FeignClient 自引用（RestaurantServiceClient）
+- ✅ 新建 RestaurantRankingDataService 本地服务
+- ✅ 添加 @EnableScheduling 到 RestaurantServiceApplication
+
+**数据库变更**
+- ✅ likes 表（从 interaction-service 合并）
+- ✅ favorites 表（从 interaction-service 合并）
+- ✅ messages 表（从 notification-service 合并）
+- ✅ hot_restaurant_rank 表（从 ranking-service 合并）
