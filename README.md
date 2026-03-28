@@ -69,7 +69,7 @@ mvn -pl campus-review-gateway/campus-review-user-gateway -am spring-boot:run
 ### 启动顺序（推荐）
 
 1. 核心服务：user-service → restaurant-service → review-service → interaction-service
-2. 依赖服务：notification-service → risk-control-service → ranking-service → admin-service
+2. 依赖服务：notification-service → ranking-service → admin-service
 3. 网关：user-gateway → admin-gateway
 
 ## API 文档
