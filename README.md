@@ -25,10 +25,9 @@ campus-review/
 ├── campus-review-model        # 跨服务 DTO/模型
 ├── campus-review-utils        # 工具组件（JWT 等）
 ├── campus-review-service      # 微服务聚合
-│   ├── user-service           # 用户服务 (8101)
+│   ├── user-service           # 用户服务 (8101) - 包含通知功能
 │   ├── restaurant-service     # 餐馆服务 (8102) - 包含排行榜功能
-│   ├── review-service         # 评价服务 (8103) - 包含互动功能
-│   └── notification-service   # 通知服务 (8106)
+│   └── review-service         # 评价服务 (8103) - 包含互动功能
 ├── campus-review-gateway      # 网关聚合
 │   ├── campus-review-user-gateway   # 用户网关 (8001)
 │   └── campus-review-admin-gateway  # 管理网关 (8002)
