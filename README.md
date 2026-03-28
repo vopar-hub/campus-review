@@ -144,7 +144,7 @@ ranking:
     rating-weight: 10.0
     refresh-ms: 60000
 
-# Redis 配置（ranking-service、risk-control-service）
+# Redis 配置（ranking-service）
 spring:
   data:
     redis:
