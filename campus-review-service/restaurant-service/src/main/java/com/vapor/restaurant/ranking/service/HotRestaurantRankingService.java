@@ -270,8 +270,7 @@ public class HotRestaurantRankingService {
             return List.of();
         }
         try {
-            ApiResponse<List<RestaurantDTO>> resp = restaurantServiceClient.getRestaurantsByIds(ids);
-            return resp == null || resp.getData() == null ? List.of() : resp.getData();
+            return restaurantRankingDataService.getRestaurantsByIds(ids);
         } catch (Exception e) {
             log.error("批量拉取餐馆列表失败：ids={}, error={}", ids, e.getMessage(), e);
             // 降级：返回全量餐馆列表并过滤
