@@ -316,7 +316,6 @@ mvn test
 # 单个服务测试
 mvn -pl campus-review-service/user-service -am test
 mvn -pl campus-review-service/review-service -am test
-mvn -pl campus-review-service/risk-control-service -am test
 ```
 
 ---
