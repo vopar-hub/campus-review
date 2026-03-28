@@ -49,7 +49,7 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
-        <!-- OpenFeign - 声明式 HTTP 客户端 -->
+        <!-- OpenFeign - 声明式 HTTP 客户端（调用外部服务：review-service） -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
