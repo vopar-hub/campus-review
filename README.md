@@ -84,6 +84,18 @@ mvn -pl campus-review-gateway/campus-review-user-gateway -am spring-boot:run
 1. 核心服务：user-service → restaurant-service → review-service
 2. 网关：user-gateway → admin-gateway
 
+### 数据库初始化
+
+服务启动时会自动执行 Flyway 迁移脚本，创建以下数据库：
+
+| 服务 | 数据库 | 主要表 |
+|------|--------|--------|
+| user-service | campus_user | users, messages |
+| restaurant-service | campus_restaurant | restaurants, hot_restaurant_rank |
+| review-service | campus_review | reviews, likes, favorites |
+
+**注意：** 启动前请确保 MySQL 和 Redis 服务已运行。
+
 ## API 文档
 
 每个服务都集成了 SpringDoc/Swagger，启动后可访问：
