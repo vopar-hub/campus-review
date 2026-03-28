@@ -297,6 +297,7 @@ docker-compose up -d
 - [日志配置指南](docs/logging.md)
 - [Flyway 迁移指南](docs/flyway.md)
 - [服务发现配置](docs/service-discovery.md)
+- [微服务重构报告](docs/microservices-refactoring.md) - v2.0 架构优化详情
 
 ## 后续优化方向
 
