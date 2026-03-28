@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * 互动服务 Feign 客户端。
+ * 互动服务 Feign 客户端（已合并到 review-service）。
  */
-@FeignClient(name = "interaction-service", fallback = InteractionServiceClientFallback.class)
+@FeignClient(name = "review-service", fallback = InteractionServiceClientFallback.class)
 public interface InteractionServiceClient {
 
     /**
