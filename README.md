@@ -30,8 +30,7 @@ campus-review/
 │   ├── review-service         # 评价服务 (8103)
 │   ├── interaction-service    # 互动服务 (8104)
 │   ├── ranking-service        # 排行榜服务 (8105)
-│   ├── notification-service   # 通知服务 (8106)
-│   └── admin-service          # 后台管理服务 (8108)
+│   └── notification-service   # 通知服务 (8106)
 ├── campus-review-gateway      # 网关聚合
 │   ├── campus-review-user-gateway   # 用户网关 (8001)
 │   └── campus-review-admin-gateway  # 管理网关 (8002)
