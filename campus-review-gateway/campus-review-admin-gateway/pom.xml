@@ -20,7 +20,7 @@
     <dependencies>
         <dependency>
             <groupId>com.vapor</groupId>
-            <artifactId>campus-review-utils</artifactId>
+            <artifactId>campus-review-common</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
