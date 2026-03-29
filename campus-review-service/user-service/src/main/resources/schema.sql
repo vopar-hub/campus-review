@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
-CREATE INDEX IF NOT EXISTS idx_users_student_no ON users(student_no);
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_student_no ON users(student_no);
 
 -- 消息表（从 notification-service 合并）
 CREATE TABLE IF NOT EXISTS messages (

@@ -55,7 +55,6 @@ public class UserContextUtil {
             throw new BizException(ErrorCode.FORBIDDEN, "无权限");
         }
     }
-
     /**
      * 要求当前请求具备指定角色。
      *

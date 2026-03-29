@@ -1,0 +1,16 @@
+spring:
+  config:
+    import:
+      - optional:nacos:review-service.yaml?group=DEFAULT_GROUP&refresh=true
+
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        ip: 127.0.0.1
+      config:
+        enabled: true
+
+  flyway:
+    enabled: true
+    clean-disabled: true

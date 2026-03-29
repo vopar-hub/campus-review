@@ -4,8 +4,7 @@ server:
 spring:
   application:
     name: admin-gateway
-  config:
-    import[0]: optional:nacos:admin-gateway.yaml?group=DEFAULT_GROUP
+
   cloud:
     nacos:
       discovery:
@@ -13,3 +12,5 @@ spring:
       config:
         server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
         file-extension: yaml
+        import-check:
+          enabled: false

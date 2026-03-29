@@ -1,0 +1,15 @@
+spring:
+  config:
+    import:
+      - optional:nacos:admin-gateway.yaml?group=DEFAULT_GROUP&refresh=true
+
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+      config:
+        enabled: true
+
+security:
+  jwt:
+    secret: ${JWT_SECRET}

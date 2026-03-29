@@ -1,0 +1,50 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+      config:
+        enabled: false
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/campus_review_restaurant?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 1234
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 30000
+      pool-name: RestaurantHikariCP
+      max-lifetime: 600000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+
+  flyway:
+    enabled: true
+    clean-disabled: false
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+mybatis-plus:
+  type-aliases-package: com.vapor.restaurant.**.entity,com.vapor.restaurant.ranking.**.entity
+
+minio:
+  endpoint: http://localhost:9000
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket-name: campus-review
+
+logging:
+  level:
+    root: INFO
+    com.vapor.restaurant: DEBUG
+    com.zaxxer.hikari: DEBUG

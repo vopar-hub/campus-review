@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * 提供通用 Web 过滤器 Bean，并启用 Mapper 扫描。
  */
 @Configuration
-@MapperScan("com.vapor.restaurant.mapper")
+@MapperScan({"com.vapor.restaurant.mapper", "com.vapor.restaurant.ranking.mapper"})
 public class RestaurantServiceConfig {
 
     /**

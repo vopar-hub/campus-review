@@ -1,0 +1,32 @@
+server:
+  port: 8103
+
+spring:
+  application:
+    name: review-service
+  profiles:
+    active: dev
+  config:
+    import[0]: optional:nacos:review-service.yaml?group=DEFAULT_GROUP
+  cloud:
+    nacos:
+      discovery:
+        enabled: false
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+        ip: 127.0.0.1
+      config:
+        enabled: false
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+        file-extension: yaml
+        import-check:
+          enabled: false
+
+  # 数据库配置（本地 fallback）
+  datasource:
+    url: jdbc:mysql://localhost:3306/campus_review_review?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  flyway:
+    enabled: false

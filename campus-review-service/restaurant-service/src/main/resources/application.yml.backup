@@ -1,0 +1,42 @@
+server:
+  port: 8102
+
+spring:
+  application:
+    name: restaurant-service
+  profiles:
+    active: dev
+  config:
+    import[0]: optional:nacos:restaurant-service.yaml?group=DEFAULT_GROUP
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+  cloud:
+    nacos:
+      discovery:
+        enabled: false
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+      config:
+        enabled: false
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+        file-extension: yaml
+        import-check:
+          enabled: false
+
+  # 数据库配置（本地 fallback）
+  datasource:
+    url: jdbc:mysql://localhost:3306/campus_review_restaurant?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  flyway:
+    enabled: false
+
+# MinIO 配置（敏感信息保留在本地）
+minio:
+  endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+  access-key: ${MINIO_ACCESS_KEY:minioadmin}
+  secret-key: ${MINIO_SECRET_KEY:minioadmin}
+  bucket-name: ${MINIO_BUCKET:campus-review}

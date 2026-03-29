@@ -1,0 +1,41 @@
+server:
+  port: 8104
+
+spring:
+  application:
+    name: user-service
+  profiles:
+    active: dev
+  config:
+    import[0]: optional:nacos:user-service.yaml?group=DEFAULT_GROUP
+  cloud:
+    nacos:
+      discovery:
+        enabled: false
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+      config:
+        enabled: false
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+        file-extension: yaml
+        import-check:
+          enabled: false
+
+  # 数据库配置（本地 fallback）
+  datasource:
+    url: jdbc:mysql://localhost:3306/campus_review_user?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  flyway:
+    enabled: false
+
+# JWT 配置
+security:
+  jwt:
+    secret: campus-review-secret-key-for-development-min-length-256bits
+    expiration: 86400000
+
+
+
+

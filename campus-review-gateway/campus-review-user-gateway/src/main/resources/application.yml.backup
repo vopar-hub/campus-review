@@ -4,7 +4,8 @@ server:
 spring:
   application:
     name: user-gateway
-
+  config:
+    import[0]: optional:nacos:user-gateway.yaml?group=DEFAULT_GROUP
   cloud:
     nacos:
       discovery:
@@ -13,4 +14,5 @@ spring:
         server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
         file-extension: yaml
         import-check:
-          enabled: false
+          enabled: true
+

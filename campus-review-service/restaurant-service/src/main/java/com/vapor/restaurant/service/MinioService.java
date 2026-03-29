@@ -6,6 +6,8 @@ import io.minio.MakeBucketArgs;
 import io.minio.BucketExistsArgs;
 import io.minio.MinioClient;
 import io.minio.errors.MinioException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,10 +27,12 @@ import java.util.UUID;
  */
 @Service
 public class MinioService {
+    private static final Logger log = LoggerFactory.getLogger(MinioService.class);
 
     private final MinioClient minioClient;
     private final String bucketName;
     private final String endpoint;
+    private boolean minioAvailable = true;
 
     /**
      * 构造 MinIO 服务。
@@ -54,8 +58,10 @@ public class MinioService {
             if (!exists) {
                 minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
             }
+            log.info("MinIO 存储桶 [{}] 初始化成功", bucketName);
         } catch (MinioException | IOException | NoSuchAlgorithmException | InvalidKeyException e) {
-            throw new RuntimeException("初始化 MinIO 存储桶失败", e);
+            log.warn("MinIO 不可用，跳过存储桶初始化：{}", e.getMessage());
+            minioAvailable = false;
         }
     }
 
@@ -67,6 +73,10 @@ public class MinioService {
      * @return 文件访问 URL
      */
     public String uploadFile(MultipartFile file, String dir) {
+        if (!minioAvailable) {
+            log.warn("MinIO 不可用，无法上传文件");
+            throw new RuntimeException("MinIO 服务不可用");
+        }
         try {
             // 生成唯一文件名
             String originalFilename = file.getOriginalFilename();

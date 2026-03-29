@@ -1,0 +1,20 @@
+spring:
+  config:
+    import:
+      - optional:nacos:user-service.yaml?group=DEFAULT_GROUP&refresh=true
+
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+      config:
+        enabled: true
+
+  flyway:
+    enabled: true
+    clean-disabled: true
+
+security:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: ${JWT_EXPIRATION:86400000}

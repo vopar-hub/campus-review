@@ -117,3 +117,5 @@ htmlcov/
 
 # Frontend (has its own git repository)
 campus-review-frontend/
+/.claude/
+

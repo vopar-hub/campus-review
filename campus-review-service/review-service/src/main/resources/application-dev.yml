@@ -1,0 +1,40 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        ip: 127.0.0.1
+      config:
+        enabled: false
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/campus_review_review?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 1234
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 30000
+      pool-name: ReviewHikariCP
+      max-lifetime: 600000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+
+  flyway:
+    enabled: true
+    clean-disabled: false
+
+mybatis-plus:
+  type-aliases-package: com.vapor.review.**.entity,com.vapor.review.interaction.**.entity
+
+logging:
+  level:
+    root: INFO
+    com.vapor.review: DEBUG
+    com.zaxxer.hikari: DEBUG
