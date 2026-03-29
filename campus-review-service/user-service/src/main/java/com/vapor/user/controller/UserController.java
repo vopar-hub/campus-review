@@ -43,4 +43,16 @@ public class UserController {
     public ApiResponse<UserDTO> me() {
         return ApiResponse.ok(userAccountService.me());
     }
+
+    /**
+     * 更新当前用户信息。
+     *
+     * @param request 更新请求
+     * @return 更新后的用户信息
+     */
+    @PutMapping("/me")
+    @Operation(summary = "更新当前用户信息", description = "更新当前登录用户的昵称或头像")
+    public ApiResponse<UserDTO> updateMe(@Valid @RequestBody UpdateUserRequest request) {
+        return ApiResponse.ok(userAccountService.updateMe(request));
+    }
 }
