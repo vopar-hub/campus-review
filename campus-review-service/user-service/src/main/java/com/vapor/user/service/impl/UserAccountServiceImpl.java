@@ -252,6 +252,7 @@ public class UserAccountServiceImpl implements UserAccountService {
                 entity.getEmail(),
                 entity.getStudentNo(),
                 entity.getNickname(),
+                entity.getAvatarUrl(),
                 JwtClaims.parseRoles(entity.getRoles()),
                 Boolean.TRUE.equals(entity.getBanned()),
                 entity.getCreatedAt()
