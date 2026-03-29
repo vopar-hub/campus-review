@@ -143,7 +143,7 @@ public class JwtAuthGlobalFilter implements GlobalFilter, Ordered {
      */
     private Mono<Void> unauthorized(ServerWebExchange exchange) {
         String requestId = exchange.getRequest().getHeaders().getFirst(RequestIdGlobalFilter.HEADER);
-        GatewayErrorResponse body = new GatewayErrorResponse(
+        ApiResponse<Void> body = new ApiResponse<>(
                 40100,
                 "未登录或登录已过期",
                 null,
