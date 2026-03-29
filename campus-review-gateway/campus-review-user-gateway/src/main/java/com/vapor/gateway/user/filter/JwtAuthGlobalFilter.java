@@ -2,6 +2,7 @@ package com.vapor.gateway.user.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vapor.common.api.ApiResponse;
+import com.vapor.common.gateway.filter.RequestIdGlobalFilter;
 import com.vapor.common.util.jwt.JwtClaims;
 import com.vapor.common.util.jwt.JwtService;
 import io.jsonwebtoken.ExpiredJwtException;
