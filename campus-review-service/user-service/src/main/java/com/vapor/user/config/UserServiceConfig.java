@@ -1,7 +1,7 @@
 package com.vapor.user.config;
 
 import com.vapor.common.web.RequestIdFilter;
-import com.vapor.common.web.RequestLoggingFilter;
+import com.vapor.common.web.filter.RequestLoggingFilter;
 import com.vapor.common.web.UserContextFilter;
 import com.vapor.common.util.jwt.JwtService;
 import io.swagger.v3.oas.models.OpenAPI;
