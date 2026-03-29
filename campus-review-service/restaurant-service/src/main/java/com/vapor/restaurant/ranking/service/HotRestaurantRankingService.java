@@ -47,7 +47,6 @@ public class HotRestaurantRankingService {
     private final String redisKey;
 
     private final RestaurantRankingDataService restaurantRankingDataService;
-    private final InteractionServiceClient interactionServiceClient;
     private final ReviewServiceClient reviewServiceClient;
     private final HotRestaurantRankMapper hotRestaurantRankMapper;
     private final StringRedisTemplate redisTemplate;
