@@ -253,42 +253,50 @@ startup.cmd -m standalone     # Windows
 
 **配置管理 → 配置列表 → 创建配置**
 
-按照以下步骤创建 5 个配置文件：
+**配置文件位置**: `static/nacos-config/` 目录下包含 5 个配置文件：
+
+- `user-service.yaml` - 用户服务配置
+- `restaurant-service.yaml` - 餐厅服务配置
+- `review-service.yaml` - 评价服务配置
+- `user-gateway.yaml` - 用户网关配置
+- `admin-gateway.yaml` - 管理网关配置
+
+按照以下步骤创建 5 个配置：
 
 ##### 配置 1: user-service.yaml
 
 - **Data ID**: `user-service.yaml`
 - **Group**: `DEFAULT_GROUP`
 - **配置格式**: `YAML`
-- **配置内容**: 复制 `nacos-config/user-service.yaml` 的内容
+- **配置内容**: 复制 `static/nacos-config/user-service.yaml` 的内容
 
 ##### 配置 2: restaurant-service.yaml
 
 - **Data ID**: `restaurant-service.yaml`
 - **Group**: `DEFAULT_GROUP`
 - **配置格式**: `YAML`
-- **配置内容**: 复制 `nacos-config/restaurant-service.yaml` 的内容
+- **配置内容**: 复制 `static/nacos-config/restaurant-service.yaml` 的内容
 
 ##### 配置 3: review-service.yaml
 
 - **Data ID**: `review-service.yaml`
 - **Group**: `DEFAULT_GROUP`
 - **配置格式**: `YAML`
-- **配置内容**: 复制 `nacos-config/review-service.yaml` 的内容
+- **配置内容**: 复制 `static/nacos-config/review-service.yaml` 的内容
 
 ##### 配置 4: user-gateway.yaml
 
 - **Data ID**: `user-gateway.yaml`
 - **Group**: `DEFAULT_GROUP`
 - **配置格式**: `YAML`
-- **配置内容**: 复制 `nacos-config/user-gateway.yaml` 的内容
+- **配置内容**: 复制 `static/nacos-config/user-gateway.yaml` 的内容
 
 ##### 配置 5: admin-gateway.yaml
 
 - **Data ID**: `admin-gateway.yaml`
 - **Group**: `DEFAULT_GROUP`
 - **配置格式**: `YAML`
-- **配置内容**: 复制 `nacos-config/admin-gateway.yaml` 的内容
+- **配置内容**: 复制 `static/nacos-config/admin-gateway.yaml` 的内容
 
 ### 2. 设置环境变量
 
