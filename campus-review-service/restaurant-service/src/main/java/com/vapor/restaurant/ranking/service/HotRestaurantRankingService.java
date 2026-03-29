@@ -325,7 +325,7 @@ public class HotRestaurantRankingService {
      */
     private InteractionCountDTO fetchCounts(Long restaurantId) {
         try {
-            ApiResponse<InteractionCountDTO> resp = interactionServiceClient.getCount("restaurant", restaurantId);
+            ApiResponse<InteractionCountDTO> resp = reviewServiceClient.getInteractionCount("restaurant", restaurantId);
             return resp == null || resp.getData() == null
                     ? new InteractionCountDTO("restaurant", restaurantId, 0, 0)
                     : resp.getData();
