@@ -5,6 +5,7 @@ import com.vapor.model.auth.LoginResponse;
 import com.vapor.model.auth.RefreshTokenRequest;
 import com.vapor.model.auth.RefreshTokenResponse;
 import com.vapor.model.auth.RegisterRequest;
+import com.vapor.model.user.UpdateUserRequest;
 import com.vapor.model.user.UserDTO;
 
 /**
@@ -44,4 +45,12 @@ public interface UserAccountService {
      * @return 当前用户信息
      */
     UserDTO me();
+
+    /**
+     * 更新当前用户信息。
+     *
+     * @param request 更新请求
+     * @return 更新后的用户信息
+     */
+    UserDTO updateMe(UpdateUserRequest request);
 }
