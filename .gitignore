@@ -90,7 +90,6 @@ Desktop.ini
 *~
 
 # Native image (GraalVM)
-*.pid
 *.lib
 *.a
 

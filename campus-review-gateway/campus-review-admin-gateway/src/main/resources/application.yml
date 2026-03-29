@@ -6,6 +6,8 @@ spring:
     name: admin-gateway
   main:
     web-application-type: reactive
+  profiles:
+    active: dev
 
   cloud:
     nacos:

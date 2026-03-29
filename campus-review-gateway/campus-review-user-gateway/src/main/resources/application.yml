@@ -6,6 +6,8 @@ spring:
     name: user-gateway
   main:
     web-application-type: reactive
+  profiles:
+    active: dev
 
   cloud:
     nacos:

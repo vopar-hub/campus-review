@@ -7,6 +7,15 @@ spring:
         enabled: false
 
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origin-patterns: "*"  # 允许所有来源
+            allowed-headers: "*"          # 允许所有请求头
+            allowed-methods: "*"          # 允许所有请求方法
+            allow-credentials: true       # 允许携带Cookie/Token
+            max-age: 3600                 # 预检缓存1小时
+
       routes:
         - id: user-service
           uri: lb://user-service
