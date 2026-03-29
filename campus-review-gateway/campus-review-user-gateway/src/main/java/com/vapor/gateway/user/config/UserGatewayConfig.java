@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vapor.gateway.user.filter.JwtAuthGlobalFilter;
 import com.vapor.gateway.user.filter.RequestIdGlobalFilter;
 import com.vapor.gateway.user.filter.SecurityHeadersGlobalFilter;
-import com.vapor.utils.jwt.JwtService;
+import com.vapor.common.util.jwt.JwtService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
