@@ -90,11 +90,6 @@
                 <artifactId>campus-review-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.vapor</groupId>
-                <artifactId>campus-review-utils</artifactId>
-                <version>${project.version}</version>
-            </dependency>
 
             <!-- 第三方依赖管理 -->
             <!--mybatis plus-->
