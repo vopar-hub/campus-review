@@ -131,7 +131,7 @@ public class AdminJwtAuthGlobalFilter implements GlobalFilter, Ordered {
      */
     private Mono<Void> write(ServerWebExchange exchange, HttpStatus status, int code, String message) {
         String requestId = exchange.getRequest().getHeaders().getFirst(RequestIdGlobalFilter.HEADER);
-        GatewayErrorResponse body = new GatewayErrorResponse(
+        ApiResponse<Void> body = new ApiResponse<>(
                 code,
                 message,
                 null,
