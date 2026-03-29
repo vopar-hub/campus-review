@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: user-gateway
+  main:
+    web-application-type: reactive
 
   cloud:
     nacos:
