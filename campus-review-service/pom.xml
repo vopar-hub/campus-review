@@ -25,10 +25,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.vapor</groupId>
-            <artifactId>campus-review-utils</artifactId>
-        </dependency>
         <!--        通用模块-->
         <dependency>
             <groupId>com.vapor</groupId>
