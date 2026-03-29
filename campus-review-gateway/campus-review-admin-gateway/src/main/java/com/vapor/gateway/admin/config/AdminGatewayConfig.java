@@ -1,9 +1,9 @@
 package com.vapor.gateway.admin.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vapor.common.gateway.filter.RequestIdGlobalFilter;
+import com.vapor.common.gateway.filter.SecurityHeadersGlobalFilter;
 import com.vapor.gateway.admin.filter.AdminJwtAuthGlobalFilter;
-import com.vapor.gateway.admin.filter.RequestIdGlobalFilter;
-import com.vapor.gateway.admin.filter.SecurityHeadersGlobalFilter;
 import com.vapor.common.util.jwt.JwtService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
