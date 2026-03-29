@@ -27,7 +27,6 @@
         <module>campus-review-gateway</module>
         <module>campus-review-model</module>
         <module>campus-review-service</module>
-        <module>campus-review-utils</module>
     </modules>
 
     <dependencies>
