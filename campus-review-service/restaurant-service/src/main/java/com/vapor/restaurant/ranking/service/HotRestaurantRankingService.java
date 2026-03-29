@@ -5,7 +5,6 @@ import com.vapor.model.interaction.InteractionCountDTO;
 import com.vapor.model.ranking.HotRestaurantRankItemDTO;
 import com.vapor.model.restaurant.RestaurantDTO;
 import com.vapor.model.review.ReviewDTO;
-import com.vapor.restaurant.ranking.client.InteractionServiceClient;
 import com.vapor.restaurant.ranking.client.ReviewServiceClient;
 import com.vapor.restaurant.ranking.entity.HotRestaurantRankEntity;
 import com.vapor.restaurant.ranking.mapper.HotRestaurantRankMapper;
