@@ -1,5 +1,6 @@
 package com.vapor.common.web.filter;
 
+import com.vapor.common.web.RequestIdHolder;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
