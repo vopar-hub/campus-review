@@ -3,7 +3,7 @@ package com.vapor.user.config;
 import com.vapor.common.web.RequestIdFilter;
 import com.vapor.common.web.RequestLoggingFilter;
 import com.vapor.common.web.UserContextFilter;
-import com.vapor.utils.jwt.JwtService;
+import com.vapor.common.util.jwt.JwtService;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.Contact;
@@ -24,7 +24,7 @@ import java.time.Duration;
  * 提供 Web 过滤器、密码编码器与 JWT 组件等基础 Bean，并启用 Mapper 扫描。
  */
 @Configuration
-@MapperScan("com.vapor.user.mapper")
+@MapperScan({"com.vapor.user.mapper", "com.vapor.user.notification.mapper"})
 public class UserServiceConfig {
 
     /**
@@ -107,7 +107,7 @@ public class UserServiceConfig {
      */
     @Bean
     public JwtService jwtService(
-            @Value("${security.jwt.secret}") String secret,
+            @Value("${security.jwt.secret:campus-review-secret-key-for-development}") String secret,
             @Value("${security.jwt.ttl-seconds:86400}") long ttlSeconds
     ) {
         return new JwtService(secret, Duration.ofSeconds(ttlSeconds));
