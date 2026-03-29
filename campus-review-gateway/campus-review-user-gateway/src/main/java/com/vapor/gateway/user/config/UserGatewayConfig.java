@@ -50,7 +50,7 @@ public class UserGatewayConfig {
      */
     @Bean
     public RequestIdGlobalFilter requestIdGlobalFilter() {
-        return new RequestIdGlobalFilter();
+        return new RequestIdGlobalFilter(0);
     }
 
     /**
