@@ -2,8 +2,8 @@ package com.vapor.gateway.admin.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vapor.gateway.admin.model.GatewayErrorResponse;
-import com.vapor.utils.jwt.JwtClaims;
-import com.vapor.utils.jwt.JwtService;
+import com.vapor.common.util.jwt.JwtClaims;
+import com.vapor.common.util.jwt.JwtService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
