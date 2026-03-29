@@ -35,6 +35,13 @@
             <artifactId>jjwt</artifactId>
         </dependency>
 
+        <!-- Spring Cloud Gateway (可选依赖，仅用于 Gateway 过滤器) -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
