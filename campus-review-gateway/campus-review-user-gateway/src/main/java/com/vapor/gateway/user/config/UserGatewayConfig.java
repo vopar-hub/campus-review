@@ -77,6 +77,6 @@ public class UserGatewayConfig {
      */
     @Bean
     public SecurityHeadersGlobalFilter securityHeadersGlobalFilter() {
-        return new SecurityHeadersGlobalFilter();
+        return new SecurityHeadersGlobalFilter(1);
     }
 }
