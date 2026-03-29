@@ -21,6 +21,7 @@ public class UserEntity {
     private String studentNo;
     private String passwordHash;
     private String nickname;
+    private String avatarUrl;
     private String roles;
     private Boolean banned;
     private Instant createdAt;
