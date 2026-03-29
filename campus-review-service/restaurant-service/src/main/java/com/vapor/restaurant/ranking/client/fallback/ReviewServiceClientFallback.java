@@ -1,6 +1,7 @@
 package com.vapor.restaurant.ranking.client.fallback;
 
 import com.vapor.common.api.ApiResponse;
+import com.vapor.model.interaction.InteractionCountDTO;
 import com.vapor.model.review.ReviewDTO;
 import com.vapor.restaurant.ranking.client.ReviewServiceClient;
 import org.slf4j.Logger;
@@ -20,5 +21,11 @@ public class ReviewServiceClientFallback implements ReviewServiceClient {
     public ApiResponse<List<ReviewDTO>> getReviews(Long restaurantId) {
         log.error("获取评价列表失败，restaurantId={}", restaurantId);
         return ApiResponse.ok(List.of());
+    }
+
+    @Override
+    public ApiResponse<InteractionCountDTO> getInteractionCount(String targetType, Long targetId) {
+        log.error("获取互动计数失败，targetType={}, targetId={}", targetType, targetId);
+        return ApiResponse.ok(new InteractionCountDTO(targetType, targetId, 0, 0));
     }
 }
