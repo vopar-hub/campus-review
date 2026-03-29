@@ -66,6 +66,15 @@ cd campus-review
 
 ### 2. 创建数据库
 
+#### 方式一：使用 SQL 脚本（推荐）
+
+```bash
+# 执行数据库初始化脚本
+mysql -u root -p < static/init-databases.sql
+```
+
+#### 方式二：手动创建
+
 ```sql
 -- 创建数据库
 CREATE DATABASE campus_review_user DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -73,11 +82,19 @@ CREATE DATABASE campus_review_restaurant DEFAULT CHARACTER SET utf8mb4 COLLATE u
 CREATE DATABASE campus_review_review DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
+**说明**: 数据库表结构由 Flyway 自动创建，无需手动执行建表语句。
+
 ### 3. 启动基础设施
 
 #### 启动 MySQL
 
 确保 MySQL 服务运行在 `localhost:3306`，用户名 `root`，密码 `1234`
+
+**验证数据库创建**:
+
+```bash
+mysql -u root -p -e "SHOW DATABASES LIKE 'campus_review_%';"
+```
 
 #### 启动 Redis
 
