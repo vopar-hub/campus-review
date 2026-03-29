@@ -177,6 +177,52 @@ public class UserAccountServiceImpl implements UserAccountService {
         return toDTO(entity);
     }
 
+    @Override
+    @Transactional
+    public UserDTO updateMe(UpdateUserRequest request) {
+        Long userId = UserContextUtil.requireUserId();
+        log.info("更新用户信息：userId={}, nickname={}, hasAvatar={}",
+                 userId, request.nickname(), request.avatarUrl() != null);
+
+        // 检查是否有需要更新的字段
+        if (request.nickname() == null && request.avatarUrl() == null) {
+            log.warn("更新用户信息失败 - 无有效更新字段：userId={}", userId);
+            throw new BizException(ErrorCode.BAD_REQUEST, "至少需要提供一个更新字段");
+        }
+
+        // 验证用户是否存在
+        UserEntity existing = userMapper.selectById(userId);
+        if (existing == null) {
+            log.warn("更新用户信息失败 - 用户不存在：userId={}", userId);
+            throw new BizException(ErrorCode.NOT_FOUND, "用户不存在");
+        }
+
+        // 构建更新条件
+        UpdateWrapper<UserEntity> wrapper = new UpdateWrapper<>();
+        wrapper.eq("id", userId);
+
+        if (request.nickname() != null) {
+            wrapper.set("nickname", request.nickname());
+        }
+
+        if (request.avatarUrl() != null) {
+            wrapper.set("avatar_url", request.avatarUrl());
+        }
+
+        wrapper.set("updated_at", Instant.now());
+
+        int updated = userMapper.update(null, wrapper);
+        if (updated == 0) {
+            log.warn("更新用户信息失败 - 更新记录数为0：userId={}", userId);
+            throw new BizException(ErrorCode.INTERNAL_ERROR, "更新失败");
+        }
+
+        // 查询更新后的数据
+        UserEntity updatedEntity = userMapper.selectById(userId);
+        log.info("更新用户信息成功：userId={}", userId);
+        return toDTO(updatedEntity);
+    }
+
     /**
      * 通过账号查找用户。
      *
