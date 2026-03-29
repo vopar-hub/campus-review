@@ -18,13 +18,6 @@
     </properties>
 
     <dependencies>
-
-
-        <dependency>
-            <groupId>com.vapor</groupId>
-            <artifactId>campus-review-utils</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>com.vapor</groupId>
             <artifactId>campus-review-common</artifactId>
