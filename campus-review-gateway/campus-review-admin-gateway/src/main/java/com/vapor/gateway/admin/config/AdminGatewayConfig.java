@@ -59,6 +59,6 @@ public class AdminGatewayConfig {
      */
     @Bean
     public SecurityHeadersGlobalFilter securityHeadersGlobalFilter() {
-        return new SecurityHeadersGlobalFilter();
+        return new SecurityHeadersGlobalFilter(-1000);
     }
 }
