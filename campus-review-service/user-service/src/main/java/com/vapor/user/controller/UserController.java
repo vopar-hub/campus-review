@@ -1,11 +1,15 @@
 package com.vapor.user.controller;
 
 import com.vapor.common.api.ApiResponse;
+import com.vapor.model.user.UpdateUserRequest;
 import com.vapor.model.user.UserDTO;
 import com.vapor.user.service.UserAccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
