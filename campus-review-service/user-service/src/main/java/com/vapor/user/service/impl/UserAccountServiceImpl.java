@@ -1,8 +1,10 @@
 package com.vapor.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.vapor.common.error.BizException;
 import com.vapor.common.error.ErrorCode;
+import com.vapor.common.util.UserContextUtil;
 import com.vapor.common.web.UserContext;
 import com.vapor.common.web.UserContextHolder;
 import com.vapor.model.auth.LoginRequest;
@@ -10,6 +12,7 @@ import com.vapor.model.auth.LoginResponse;
 import com.vapor.model.auth.RefreshTokenRequest;
 import com.vapor.model.auth.RefreshTokenResponse;
 import com.vapor.model.auth.RegisterRequest;
+import com.vapor.model.user.UpdateUserRequest;
 import com.vapor.model.user.UserDTO;
 import com.vapor.user.entity.UserEntity;
 import com.vapor.user.mapper.UserMapper;
