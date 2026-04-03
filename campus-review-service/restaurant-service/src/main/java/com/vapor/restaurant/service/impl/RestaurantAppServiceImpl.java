@@ -54,16 +54,16 @@ public class RestaurantAppServiceImpl implements RestaurantAppService {
     @Override
     @Transactional
     public RestaurantDTO createWithImage(RestaurantCreateRequest request, MultipartFile coverImage) {
-        // 上传图片并获取 URL
-        String imageUrl = minioService.uploadFile(coverImage, "restaurants");
+        // 上传图片，返回对象路径
+        String objectPath = minioService.uploadFile(coverImage, "restaurants");
 
-        // 创建餐厅，使用上传的图片 URL
+        // 创建餐厅，存储对象路径
         RestaurantCreateRequest newRequest = new RestaurantCreateRequest(
                 request.name(),
                 request.campus(),
                 request.address(),
                 request.description(),
-                imageUrl
+                objectPath
         );
         return create(newRequest);
     }
