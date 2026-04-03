@@ -7,7 +7,6 @@ spring:
         enabled: false
 
     gateway:
-
       globalcors:
         cors-configurations:
           '[/**]':
