@@ -70,7 +70,7 @@ public class MinioService {
      *
      * @param file 上传的文件
      * @param dir 目录（可选，如 "restaurants"）
-     * @return 文件访问 URL
+     * @return 对象路径（不是 URL）
      */
     public String uploadFile(MultipartFile file, String dir) {
         if (!minioAvailable) {
@@ -103,8 +103,8 @@ public class MinioService {
                 );
             }
 
-            // 返回文件访问 URL
-            return getFileUrl(objectName);
+            // 返回对象路径，不是 URL
+            return objectName;
         } catch (MinioException | IOException | NoSuchAlgorithmException | InvalidKeyException e) {
             throw new RuntimeException("上传文件失败", e);
         }
