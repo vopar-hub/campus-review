@@ -106,13 +106,20 @@ public class RestaurantAppServiceImpl implements RestaurantAppService {
      * @return 餐馆 DTO
      */
     private RestaurantDTO toDTO(RestaurantEntity entity) {
+        String imageUrl = entity.getCoverImageUrl();
+
+        // 动态生成访问 URL
+        if (imageUrl != null && !imageUrl.isBlank()) {
+            imageUrl = minioService.getFileUrl(imageUrl);
+        }
+
         return new RestaurantDTO(
                 entity.getId(),
                 entity.getName(),
                 entity.getCampus(),
                 entity.getAddress(),
                 entity.getDescription(),
-                entity.getCoverImageUrl(),
+                imageUrl,
                 entity.getCreatedAt()
         );
     }
