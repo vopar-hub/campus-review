@@ -2,9 +2,14 @@ spring:
   cloud:
     nacos:
       discovery:
-        enabled: true
+        enabled: false
       config:
         enabled: false
+    openfeign:
+      client:
+        config:
+          review-service:
+            url: http://localhost:8103
 
   datasource:
     url: jdbc:mysql://localhost:3306/campus_restaurant?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
@@ -39,6 +44,7 @@ mybatis-plus:
 
 minio:
   endpoint: http://localhost:9000
+  public-url: http://134.175.82.54/minio
   access-key: minioadmin
   secret-key: minioadmin
   bucket-name: campus-review

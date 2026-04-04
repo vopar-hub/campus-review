@@ -235,6 +235,101 @@ curl -X POST http://localhost:8001/api/auth/login \
 
 ---
 
+## 低内存服务器部署（4GB 内存优化）
+
+对于内存有限的服务器（如 4GB），可以使用优化启动脚本来降低内存占用。
+
+### JVM 内存优化参数
+
+```bash
+# 每个服务分配 256MB 堆内存
+-Xmx256m -Xms128m -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+UseStringDeduplication
+```
+
+| 参数 | 说明 |
+|------|------|
+| `-Xmx256m` | 最大堆内存 256MB |
+| `-Xms128m` | 初始堆内存 128MB |
+| `-XX:+UseG1GC` | 使用 G1 垃圾收集器（低延迟） |
+| `-XX:MaxGCPauseMillis=100` | 最大 GC 停顿时间 100ms |
+| `-XX:+UseStringDeduplication` | 字符串去重，节省内存 |
+| `-XX:+ExitOnOutOfMemoryError` | OOM 时自动退出，便于监控重启 |
+
+### 使用启动脚本
+
+项目提供了优化的启动脚本 `deploy/start-services.sh`：
+
+```bash
+# 启动所有服务
+bash deploy/start-services.sh start
+
+# 停止所有服务
+bash deploy/start-services.sh stop
+
+# 重启所有服务
+bash deploy/start-services.sh restart
+
+# 查看服务状态
+bash deploy/start-services.sh status
+
+# 查看指定服务日志
+bash deploy/start-services.sh logs user-service
+
+# 查看内存使用
+bash deploy/start-services.sh memory
+```
+
+### 内存占用预估
+
+| 服务 | 堆内存 | 预估总内存 |
+|------|--------|-----------|
+| user-service | 256MB | ~350MB |
+| restaurant-service | 256MB | ~350MB |
+| review-service | 256MB | ~350MB |
+| user-gateway | 256MB | ~350MB |
+| admin-gateway | 256MB | ~350MB |
+| **总计** | **1.3GB** | **~1.8GB** |
+
+> 加上 MySQL、Redis、MinIO、Nginx 等基础设施，总内存占用约 2.5-3GB，适合 4GB 内存服务器。
+
+### 手动启动单个服务
+
+```bash
+# 启动 user-service
+java -Xmx256m -Xms128m -XX:+UseG1GC \
+  -Dspring.profiles.active=dev \
+  -jar campus-review-service/user-service/target/user-service-0.0.1-SNAPSHOT.jar &
+
+# 启动 restaurant-service
+java -Xmx256m -Xms128m -XX:+UseG1GC \
+  -Dspring.profiles.active=dev \
+  -jar campus-review-service/restaurant-service/target/restaurant-service-0.0.1-SNAPSHOT.jar &
+
+# 启动 review-service
+java -Xmx256m -Xms128m -XX:+UseG1GC \
+  -Dspring.profiles.active=dev \
+  -jar campus-review-service/review-service/target/review-service-0.0.1-SNAPSHOT.jar &
+
+# 启动 user-gateway
+java -Xmx256m -Xms128m -XX:+UseG1GC \
+  -Dspring.profiles.active=dev \
+  -jar campus-review-gateway/campus-review-user-gateway/target/campus-review-user-gateway-0.0.1-SNAPSHOT.jar &
+
+# 启动 admin-gateway
+java -Xmx256m -Xms128m -XX:+UseG1GC \
+  -Dspring.profiles.active=dev \
+  -jar campus-review-gateway/campus-review-admin-gateway/target/campus-review-admin-gateway-0.0.1-SNAPSHOT.jar &
+```
+
+### 内存调优建议
+
+1. **监控内存使用**：使用 `free -h` 和 `ps aux | grep java` 监控
+2. **调整堆内存**：根据实际负载调整 `-Xmx` 参数（128m-512m）
+3. **启用 Swap**：建议配置 2GB Swap 分区作为缓冲
+4. **日志级别**：生产环境使用 INFO 级别减少内存压力
+
+---
+
 ## 生产环境部署
 
 ### 1. 环境准备

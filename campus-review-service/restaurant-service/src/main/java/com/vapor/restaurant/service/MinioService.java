@@ -32,6 +32,7 @@ public class MinioService {
     private final MinioClient minioClient;
     private final String bucketName;
     private final String endpoint;
+    private final String publicUrl;
     private boolean minioAvailable = true;
 
     /**
@@ -43,10 +44,12 @@ public class MinioService {
      */
     public MinioService(MinioClient minioClient,
                         @Value("${minio.bucket-name}") String bucketName,
-                        @Value("${minio.endpoint}") String endpoint) {
+                        @Value("${minio.endpoint}") String endpoint,
+                        @Value("${minio.public-url:}") String publicUrl) {
         this.minioClient = minioClient;
         this.bucketName = bucketName;
         this.endpoint = endpoint;
+        this.publicUrl = publicUrl.isEmpty() ? endpoint : publicUrl;
     }
 
     /**
@@ -121,25 +124,14 @@ public class MinioService {
     }
 
     /**
-     * 获取文件的预签名访问 URL。
+     * 获取文件的访问 URL。
      *
      * @param objectName 对象名称（路径）
      * @return 文件访问 URL
      */
     public String getFileUrl(String objectName) {
-        try {
-            // 生成预签名 URL（7 天有效期）
-            String presignedUrl = minioClient.getPresignedObjectUrl(
-                    GetPresignedObjectUrlArgs.builder()
-                            .method(io.minio.http.Method.GET)
-                            .bucket(bucketName)
-                            .object(objectName)
-                            .build()
-            );
-            return presignedUrl;
-        } catch (MinioException | IOException | NoSuchAlgorithmException | InvalidKeyException e) {
-            throw new RuntimeException("获取文件 URL 失败", e);
-        }
+        // 直接返回公开访问 URL（存储桶已设置为公开下载）
+        return publicUrl + "/" + bucketName + "/" + objectName;
     }
 
     /**

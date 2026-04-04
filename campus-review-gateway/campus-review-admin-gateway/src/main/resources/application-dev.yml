@@ -2,7 +2,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        enabled: true
+        enabled: false
       config:
         enabled: false
 
@@ -18,15 +18,15 @@ spring:
 
       routes:
         - id: user-service
-          uri: lb://user-service
+          uri: http://localhost:8104
           predicates:
             - Path=/api/admin/users/**
         - id: restaurant-service
-          uri: lb://restaurant-service
+          uri: http://localhost:8102
           predicates:
             - Path=/api/admin/restaurants/**
         - id: review-service
-          uri: lb://review-service
+          uri: http://localhost:8103
           predicates:
             - Path=/api/admin/reviews/**
 

@@ -2,8 +2,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        enabled: true
-        ip: 127.0.0.1
+        enabled: false
       config:
         enabled: false
 
