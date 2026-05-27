@@ -65,6 +65,7 @@ application-local.properties
 
 # Environment variables
 .env
+!campus-review-frontend/.env
 .env.local
 .env.*.local
 
@@ -119,7 +120,9 @@ campus-review-frontend/node_modules/
 campus-review-frontend/dist/
 campus-review-frontend/logs/
 campus-review-frontend/claude-agent-app/
-*.png
+
+# Large images (keep public/logo.png)
+中原科技学院.png
 
 # Claude
 /.claude/
