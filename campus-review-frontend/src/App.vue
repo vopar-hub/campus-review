@@ -1,0 +1,15 @@
+<template>
+  <router-view />
+</template>
+
+<script setup lang="ts">
+// 根组件
+</script>
+
+<style>
+#app {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--neutral-50);
+}
+</style>

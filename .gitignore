@@ -114,12 +114,16 @@ jacoco.exec
 htmlcov/
 .nyc_output/
 
-# Frontend (has its own git repository)
-campus-review-frontend/
+# Frontend
+campus-review-frontend/node_modules/
+campus-review-frontend/dist/
+campus-review-frontend/logs/
+campus-review-frontend/claude-agent-app/
+*.png
+
+# Claude
 /.claude/
 
+# Docs
 /docs/
-/.claude/
-
-
-./QWEN.md
+test-hook-效果.txt

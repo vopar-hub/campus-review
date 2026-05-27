@@ -1,21 +1,15 @@
 package com.vapor.restaurant.controller;
 
 import com.vapor.common.api.ApiResponse;
-import com.vapor.model.restaurant.RestaurantCreateRequest;
 import com.vapor.model.restaurant.RestaurantDTO;
 import com.vapor.restaurant.service.RestaurantAppService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,11 +18,12 @@ import java.util.stream.Collectors;
 /**
  * 餐馆接口（用户侧）。
  *
- * 提供餐馆创建、按 ID 查询与检索等能力。
+ * 提供餐馆查询与检索等能力。
+ * 创建餐厅请使用管理端接口 /api/admin/restaurants
  */
 @RestController
 @RequestMapping("/api/restaurants")
-@Tag(name = "餐馆管理", description = "餐馆创建、查询与检索接口")
+@Tag(name = "餐馆管理", description = "餐馆查询与检索接口")
 public class RestaurantController {
     private final RestaurantAppService restaurantAppService;
 
@@ -39,47 +34,6 @@ public class RestaurantController {
      */
     public RestaurantController(RestaurantAppService restaurantAppService) {
         this.restaurantAppService = restaurantAppService;
-    }
-
-    /**
-     * 创建餐馆。
-     *
-     * @param request 创建请求
-     * @return 创建后的餐馆信息
-     */
-    @PostMapping
-    @Operation(summary = "创建餐馆", description = "创建新的餐馆记录（JSON 格式）")
-    public ApiResponse<RestaurantDTO> create(@Valid @RequestBody RestaurantCreateRequest request) {
-        return ApiResponse.ok(restaurantAppService.create(request));
-    }
-
-    /**
-     * 创建餐馆（带图片上传）。
-     *
-     * @param name 餐馆名称
-     * @param campus 校区
-     * @param address 地址（可选）
-     * @param description 描述（可选）
-     * @param coverImage 封面图片文件（可选）
-     * @return 创建后的餐馆信息
-     */
-    @PostMapping("/with-image")
-    @Operation(summary = "创建餐馆（带图片上传）", description = "创建新的餐馆记录并同时上传封面图片")
-    public ApiResponse<RestaurantDTO> createWithImage(
-            @RequestParam("name") String name,
-            @RequestParam("campus") String campus,
-            @RequestParam(value = "address", required = false) String address,
-            @RequestParam(value = "description", required = false) String description,
-            @RequestParam(value = "coverImage", required = false) MultipartFile coverImage
-    ) {
-        RestaurantCreateRequest request = new RestaurantCreateRequest(name, campus, address, description, null);
-        RestaurantDTO restaurant;
-        if (coverImage != null && !coverImage.isEmpty()) {
-            restaurant = restaurantAppService.createWithImage(request, coverImage);
-        } else {
-            restaurant = restaurantAppService.create(request);
-        }
-        return ApiResponse.ok(restaurant);
     }
 
     /**

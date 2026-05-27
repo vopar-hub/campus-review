@@ -13,11 +13,13 @@ import com.vapor.review.mapper.ReviewMapper;
 import com.vapor.review.service.ReviewAppService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 评价应用服务实现类。
@@ -27,14 +29,17 @@ public class ReviewAppServiceImpl implements ReviewAppService {
     private static final Logger log = LoggerFactory.getLogger(ReviewAppServiceImpl.class);
 
     private final ReviewMapper reviewMapper;
+    private final StringRedisTemplate redisTemplate;
 
     /**
      * 构造应用服务。
      *
      * @param reviewMapper 评价数据访问组件
+     * @param redisTemplate Redis 模板
      */
-    public ReviewAppServiceImpl(ReviewMapper reviewMapper) {
+    public ReviewAppServiceImpl(ReviewMapper reviewMapper, StringRedisTemplate redisTemplate) {
         this.reviewMapper = reviewMapper;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -43,6 +48,16 @@ public class ReviewAppServiceImpl implements ReviewAppService {
         UserContext ctx = UserContextHolder.get();
         if (ctx == null || ctx.getUserId() == null) {
             throw new BizException(ErrorCode.UNAUTHORIZED, "未登录");
+        }
+
+        // 限流检查：五分钟内同一用户在同一餐厅最多发送两次评论
+        String limitKey = "review:limit:" + ctx.getUserId() + ":" + request.restaurantId();
+        Long count = redisTemplate.opsForValue().increment(limitKey);
+        if (count != null && count == 1) {
+            redisTemplate.expire(limitKey, 5, TimeUnit.MINUTES);
+        }
+        if (count != null && count > 2) {
+            throw new BizException(ErrorCode.TOO_MANY_REQUESTS, "发送评价太频繁");
         }
 
         log.info("发布评价：userId={}, restaurantId={}, rating={}", ctx.getUserId(), request.restaurantId(), request.rating());

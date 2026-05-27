@@ -1,0 +1,451 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   🎨 活力校园 - 多彩设计系统
+   ============================================ */
+
+/* 全局 CSS 变量 */
+:root {
+  /* ========== 主色调 - 活力多彩 ========== */
+  /* 珊瑚橙 - 主品牌色 */
+  --color-coral: #FF6B6B;
+  --color-coral-light: #FF8E8E;
+  --color-coral-dark: #E85555;
+
+  /* 薄荷绿 - 清新辅助色 */
+  --color-mint: #4ECDC4;
+  --color-mint-light: #7EDDD6;
+  --color-mint-dark: #3BB8B0;
+
+  /* 阳光黄 - 活力点缀色 */
+  --color-sunshine: #FFE66D;
+  --color-sunshine-light: #FFF09A;
+  --color-sunshine-dark: #F5D84D;
+
+  /* 天空蓝 - 信任色 */
+  --color-sky: #45B7D1;
+  --color-sky-light: #6FC9DE;
+  --color-sky-dark: #3AA3BB;
+
+  /* 薰衣草紫 - 创意色 */
+  --color-lavender: #A78BFA;
+  --color-lavender-light: #C4B5FD;
+  --color-lavender-dark: #8B5CF6;
+
+  /* 蜜桃粉 - 温暖色 */
+  --color-peach: #F9A8D4;
+  --color-peach-light: #FBCFE8;
+  --color-peach-dark: #F472B6;
+
+  /* ========== 渐变系统 ========== */
+  /* 主品牌渐变 - 珊瑚橙到蜜桃粉 */
+  --gradient-primary: linear-gradient(135deg, #FF6B6B 0%, #F9A8D4 100%);
+
+  /* 清新渐变 - 薄荷绿到天空蓝 */
+  --gradient-fresh: linear-gradient(135deg, #4ECDC4 0%, #45B7D1 100%);
+
+  /* 活力渐变 - 阳光黄到珊瑚橙 */
+  --gradient-vibrant: linear-gradient(135deg, #FFE66D 0%, #FF6B6B 100%);
+
+  /* 梦幻渐变 - 薰衣草紫到天空蓝 */
+  --gradient-dreamy: linear-gradient(135deg, #A78BFA 0%, #45B7D1 100%);
+
+  /* 彩虹渐变 - 多彩组合 */
+  --gradient-rainbow: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 25%, #4ECDC4 50%, #45B7D1 75%, #A78BFA 100%);
+
+  /* 暖色渐变 - 珊瑚橙到阳光黄 */
+  --gradient-warm: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%);
+
+  /* 冷色渐变 - 薄荷绿到薰衣草紫 */
+  --gradient-cool: linear-gradient(135deg, #4ECDC4 0%, #A78BFA 100%);
+
+  /* ========== 中性色 - 高对比度 ========== */
+  --neutral-50: #FAFBFC;
+  --neutral-100: #F4F6F8;
+  --neutral-200: #E8ECF0;
+  --neutral-300: #D1D8E0;
+  --neutral-400: #9BA5B1;
+  --neutral-500: #6B7785;
+  --neutral-600: #4A5568;
+  --neutral-700: #2D3748;
+  --neutral-800: #1A202C;
+  --neutral-900: #0D1117;
+
+  /* ========== 功能色 ========== */
+  --color-success: #10B981;
+  --color-success-light: #D1FAE5;
+  --color-warning: #F59E0B;
+  --color-warning-light: #FEF3C7;
+  --color-error: #EF4444;
+  --color-error-light: #FEE2E2;
+  --color-info: #3B82F6;
+  --color-info-light: #DBEAFE;
+
+  /* ========== Element Plus 主题色覆盖 ========== */
+  --el-color-primary: #FF6B6B;
+  --el-color-primary-light-3: #FF8E8E;
+  --el-color-primary-light-5: #FFB4B4;
+  --el-color-primary-light-7: #FFDADA;
+  --el-color-primary-light-8: #FFEDED;
+  --el-color-primary-light-9: #FFF6F6;
+  --el-color-primary-dark-2: #E85555;
+
+  /* ========== 阴影系统 ========== */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-coral: 0 10px 40px -10px rgba(255, 107, 107, 0.4);
+  --shadow-mint: 0 10px 40px -10px rgba(78, 205, 196, 0.4);
+  --shadow-sky: 0 10px 40px -10px rgba(69, 183, 209, 0.4);
+  --shadow-lavender: 0 10px 40px -10px rgba(167, 139, 250, 0.4);
+
+  /* ========== 圆角系统 ========== */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --radius-full: 9999px;
+
+  /* ========== 动画时间 ========== */
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 暗夜模式变量 */
+html.dark {
+  /* 暗夜模式保持多彩，但降低亮度 */
+  --color-coral: #FF8E8E;
+  --color-coral-light: #FFA8A8;
+  --color-coral-dark: #FF6B6B;
+
+  --color-mint: #7EDDD6;
+  --color-mint-light: #9EEAE4;
+  --color-mint-dark: #4ECDC4;
+
+  --color-sunshine: #FFF09A;
+  --color-sunshine-light: #FFF7C2;
+  --color-sunshine-dark: #FFE66D;
+
+  --color-sky: #6FC9DE;
+  --color-sky-light: #92D6E6;
+  --color-sky-dark: #45B7D1;
+
+  --color-lavender: #C4B5FD;
+  --color-lavender-light: #DDD6FE;
+  --color-lavender-dark: #A78BFA;
+
+  --color-peach: #FBCFE8;
+  --color-peach-light: #FCE7F3;
+  --color-peach-dark: #F9A8D4;
+
+  /* 暗夜模式中性色反转 */
+  --neutral-50: #0D1117;
+  --neutral-100: #161B22;
+  --neutral-200: #21262D;
+  --neutral-300: #30363D;
+  --neutral-400: #484F58;
+  --neutral-500: #6E7681;
+  --neutral-600: #8B949E;
+  --neutral-700: #B1BAC4;
+  --neutral-800: #C9D1D9;
+  --neutral-900: #F0F6FC;
+
+  /* Element Plus 深色模式主题色覆盖 */
+  --el-color-primary: #FF8E8E;
+  --el-color-primary-light-3: #FFA8A8;
+  --el-color-primary-light-5: #FFC4C4;
+  --el-color-primary-light-7: #FFE0E0;
+  --el-color-primary-light-8: #FFEDED;
+  --el-color-primary-light-9: #FFF6F6;
+  --el-color-primary-dark-2: #FF6B6B;
+
+  /* 深色模式背景色 */
+  --el-bg-color: #161B22;
+  --el-bg-color-overlay: #21262D;
+}
+
+/* ========== 全局基础样式 ========== */
+html {
+  background: var(--neutral-50);
+  scroll-behavior: smooth;
+}
+
+html.dark {
+  background: var(--neutral-50);
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--neutral-50);
+  min-height: 100vh;
+  color: var(--neutral-800);
+  line-height: 1.6;
+}
+
+html.dark body {
+  background: var(--neutral-50);
+  color: var(--neutral-800);
+}
+
+#app {
+  min-height: 100vh;
+}
+
+/* ========== Element Plus 主题覆盖 ========== */
+.el-button--primary {
+  background: var(--gradient-primary) !important;
+  border: none !important;
+  font-weight: 600;
+  transition: all var(--duration-normal) var(--ease-bounce);
+}
+
+.el-button--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-coral);
+}
+
+.el-button--primary:active {
+  transform: translateY(0);
+}
+
+/* 成功按钮 */
+.el-button--success {
+  background: var(--gradient-fresh) !important;
+  border: none !important;
+}
+
+.el-button--success:hover {
+  box-shadow: var(--shadow-mint);
+}
+
+/* 警告按钮 */
+.el-button--warning {
+  background: var(--gradient-warm) !important;
+  border: none !important;
+}
+
+/* 信息按钮 */
+.el-button--info {
+  background: var(--gradient-dreamy) !important;
+  border: none !important;
+}
+
+.el-button--info:hover {
+  box-shadow: var(--shadow-lavender);
+}
+
+/* ========== 全局动画 ========== */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(5deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* ========== 全局工具类 ========== */
+.gradient-text-primary {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-fresh {
+  background: var(--gradient-fresh);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-vibrant {
+  background: var(--gradient-vibrant);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-rainbow {
+  background: var(--gradient-rainbow);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% auto;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* 玻璃态效果 */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+html.dark .glass {
+  background: rgba(22, 27, 34, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ========== 滚动条美化 ========== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--neutral-100);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gradient-primary);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-coral-dark);
+}
+
+/* ========== 选择文本样式 ========== */
+::selection {
+  background: var(--color-coral);
+  color: white;
+}
+
+::-moz-selection {
+  background: var(--color-coral);
+  color: white;
+}
+
+/* ========== 移动端全局优化 ========== */
+@media (max-width: 768px) {
+  /* 优化触摸反馈 */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* 移动端按钮优化 */
+  .el-button {
+    min-height: 42px;
+  }
+
+  .el-button--small {
+    min-height: 36px;
+  }
+
+  /* 移动端输入框优化 */
+  .el-input__inner {
+    font-size: 16px !important; /* 防止 iOS 自动缩放 */
+  }
+
+  /* 移动端卡片优化 */
+  .el-card {
+    border-radius: var(--radius-lg);
+  }
+
+  /* 移动端对话框优化 */
+  .el-dialog {
+    width: 90% !important;
+    margin: 20px auto !important;
+    border-radius: var(--radius-xl);
+  }
+
+  /* 移动端下拉菜单优化 */
+  .el-dropdown-menu {
+    max-width: 280px;
+  }
+
+  /* 移动端消息提示优化 */
+  .el-message {
+    min-width: 280px;
+    max-width: 90%;
+  }
+
+  /* 移动端分页优化 */
+  .el-pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .el-pagination .el-pagination__jump {
+    display: none;
+  }
+}
+
+/* ========== 安全区域适配 ========== */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .app-main {
+    padding-bottom: calc(32px + env(safe-area-inset-bottom));
+  }
+}
